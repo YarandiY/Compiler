@@ -6,7 +6,7 @@ import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class DoubleConst extends Constant {
+public class DoubleConst extends ConstantExp {
 
     private Double value;
 

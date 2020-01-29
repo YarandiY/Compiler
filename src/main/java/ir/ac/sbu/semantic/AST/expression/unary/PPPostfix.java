@@ -9,7 +9,7 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 
 //TODO
-public class PPPostfix extends Unary{
+public class PPPostfix extends UnaryExp {
     public PPPostfix(Expression operand) {
         super(operand);
     }

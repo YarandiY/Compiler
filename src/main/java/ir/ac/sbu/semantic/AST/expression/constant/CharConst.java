@@ -4,7 +4,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-public class CharConst extends Constant {
+public class CharConst extends ConstantExp {
 
     private Character value;
 

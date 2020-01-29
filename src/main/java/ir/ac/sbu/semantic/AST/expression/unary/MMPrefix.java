@@ -10,7 +10,7 @@ import static org.objectweb.asm.Opcodes.ICONST_1;
 import static org.objectweb.asm.Opcodes.ISUB;
 
 //TODO
-public class MMPrefix extends Unary {
+public class MMPrefix extends UnaryExp {
     public MMPrefix(Expression operand) {
         super(operand);
     }

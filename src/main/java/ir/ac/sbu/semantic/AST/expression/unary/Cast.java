@@ -7,7 +7,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 
-public class Cast extends Unary{
+public class Cast extends UnaryExp {
     private Type to;
 
     public Cast(Expression operand,Type to) {

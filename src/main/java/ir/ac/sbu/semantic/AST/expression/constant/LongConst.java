@@ -6,7 +6,7 @@ import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class LongConst extends Constant {
+public class LongConst extends ConstantExp {
 
     private Long value;
 

@@ -6,7 +6,7 @@ import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class IntegerConst extends Constant {
+public class IntegerConst extends ConstantExp {
 
     private Integer value;
 

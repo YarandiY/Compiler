@@ -9,14 +9,14 @@ import static org.objectweb.asm.Opcodes.IXOR;
 import static org.objectweb.asm.Opcodes.ICONST_M1;
 
 
-public class Not extends Unary {
+public class Not extends UnaryExp {
     public Not(Expression operand) {
         super(operand);
     }
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        if(type != Type.INT_TYPE || type != Type.LONG_TYPE)
+        if(type != Type.INT_TYPE && type != Type.LONG_TYPE)
             throw new RuntimeException("It's not real or integer.so I can't not it!");
         operand.codegen(mv, cw);
         mv.visitInsn(ICONST_M1);

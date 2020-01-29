@@ -7,7 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.INEG;
 
-public class Negative extends Unary {
+public class Negative extends UnaryExp {
 
 
     public Negative(Expression operand) {

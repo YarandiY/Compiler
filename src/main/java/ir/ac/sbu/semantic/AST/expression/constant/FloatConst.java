@@ -6,7 +6,7 @@ import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class FloatConst extends Constant {
+public class FloatConst extends ConstantExp {
 
     private Float value;
 

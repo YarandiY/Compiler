@@ -7,7 +7,7 @@ import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class BooleanConst extends Constant {
+public class BooleanConst extends ConstantExp {
 
     private Boolean value;
 

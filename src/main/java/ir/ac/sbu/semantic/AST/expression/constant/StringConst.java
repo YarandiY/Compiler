@@ -4,7 +4,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-public class StringConst extends Constant {
+public class StringConst extends ConstantExp {
 
     private String value;
 
