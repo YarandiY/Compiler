@@ -1,6 +1,7 @@
 package ir.ac.sbu.semantic.symbolTable;
 
 import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
+import ir.ac.sbu.semantic.AST.declaration.record.RecordDcl;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import lombok.Data;
 import org.objectweb.asm.Type;
@@ -9,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-
-// TODO: 28/06/2018 pop scope
 @Data
 public class SymbolTableHandler {
 
@@ -24,22 +23,12 @@ public class SymbolTableHandler {
         return instance;
     }
 
-
-    /*public static int FUNCTION = 0;
-    public static int LOOP = 2;
-    public static int SWITCH = 1;
-    public static int COND_OTHER_THAN_SWITCH = 3;*/
-
     private static FunctionDcl LastSeenFunction;
-
-    //why???
-    //private static int labelCounter = 0;
-
     private static boolean inLoop = false;
 
     private ArrayList<SymbolTable> stackScopes = new ArrayList<>();
     private HashMap<String, ArrayList<FunctionDcl>> funcDcls = new HashMap<>();
-    //private HashMap<String, StructDeclaration> recordDcls = new HashMap<>();
+    private HashMap<String, RecordDcl> recordDcls = new HashMap<>();
 
 
     public static int getSize(String name) {
@@ -163,7 +152,8 @@ public class SymbolTableHandler {
         }
         //TODO what about the global variables??? --> static fields
         getLastFrame().put(name, dscp);
-        //getLastFrame().addIndex(dscp.getSize());
+        //if (dscp instanceof DSCP_DYNAMIC)
+          //  getLastFrame().addIndex(dscp.getType().getSize() - 1);
     }
 
     public DSCP getDescriptor(String name) {
@@ -192,31 +182,31 @@ public class SymbolTableHandler {
         return inLoop;
     }
 
-    /*public void addRecord(StructDeclaration record) {
+    public void addRecord(RecordDcl record) {
         if (recordDcls.containsKey(record.getName()))
-            throw new Redeclaration();
-
+            throw new RuntimeException("The record was declared early!");
         recordDcls.put(record.getName(), record);
-    }*/
+    }
 
 
-    /*public StructDeclaration getRecord(String name) {
+    public RecordDcl getRecord(String name) {
         if (recordDcls.containsKey(name))
-            throw new NotFound("Record Not Found");
+            throw new RuntimeException("Record Not Found");
 
         return recordDcls.get(name);
-    }*/
+    }
 
-   /* public boolean isRecordDefined(String name){
+    public boolean isRecordDefined(String name){
         try{
             getRecord(name);
             return true;
-        }catch (NotFound e){
+        }catch (RuntimeException e){
             return false;
         }
-    }*/
+    }
 
 
+    //TODO --> koja estefade mishe khob?
     /*public int returnNewIndex() {
         return getLastFrame().getAndAddIndex();
     }*/

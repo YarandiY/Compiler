@@ -1,0 +1,19 @@
+package ir.ac.sbu.semantic.AST.declaration.record;
+
+import ir.ac.sbu.semantic.AST.Node;
+import lombok.Data;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
+
+@Data
+public class RecordDcl implements Node {
+
+    private String name;
+
+
+
+    @Override
+    public void codegen(MethodVisitor mv, ClassWriter cw) {
+
+    }
+}

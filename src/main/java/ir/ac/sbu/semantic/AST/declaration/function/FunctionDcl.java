@@ -1,6 +1,6 @@
 package ir.ac.sbu.semantic.AST.declaration.function;
 
-import ir.ac.sbu.semantic.AST.Operation;
+import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.block.Block;
 import ir.ac.sbu.semantic.AST.declaration.variable.VarDcl;
 import ir.ac.sbu.semantic.symbolTable.Scope;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 @Data
-public class FunctionDcl implements Operation {
+public class FunctionDcl implements Node {
 
    private Type type;
    private String name;
@@ -29,8 +29,6 @@ public class FunctionDcl implements Operation {
        this.name = name;
        this.block = block;
        this.inputs = inputs;
-
-
        String signature = "(";
        for(VarDcl varDcl : inputs){
            signature = signature+varDcl.getType().toString();
@@ -64,9 +62,8 @@ public class FunctionDcl implements Operation {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-       //TODO what is descriptor??
         // cv.visitMethod(ACC_PUBLIC,name,this.signature,null,null); msdn version!
-       MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC,name,"",signature,null); //ab version
+       MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC,name,"",signature,null); //ab version!
        methodVisitor.visitCode();
        //TODO
        SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
