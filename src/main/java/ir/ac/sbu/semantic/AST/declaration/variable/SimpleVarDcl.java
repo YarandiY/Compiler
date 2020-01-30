@@ -81,8 +81,8 @@ public class SimpleVarDcl extends VarDcl {
     private void declare() {
         if (name == null || type == null)
             throw new RuntimeException("the name or type for the var dcl is null");
-        DSCP dscp = new DSCP();
-        SymbolTableHandler.getInstance().addVariable(dscp, name);
+//        DSCP dscp = new DSCP();
+//        SymbolTableHandler.getInstance().addVariable(dscp, name);
         //TODO global variables --> needs DSCPs
     }
 }
