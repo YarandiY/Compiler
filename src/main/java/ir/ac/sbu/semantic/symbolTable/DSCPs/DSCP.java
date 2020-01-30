@@ -8,8 +8,8 @@ public abstract class DSCP {
     protected Type type;
     protected boolean isValid;
 
-    public DSCP(Type type, boolean hasValue) {
+    public DSCP(Type type, boolean isValid) {
         this.type = type;
-        this.isValid = hasValue;
+        this.isValid = isValid;
     }
 }

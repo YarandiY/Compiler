@@ -15,7 +15,7 @@ public class GlobalArrDSCP extends GlobalDSCP {
         this.dimList = dimList;
     }
 
-    public GlobalArrDSCP(Type type, boolean hasValue) {
-        super(type, hasValue);
+    public GlobalArrDSCP(Type type, boolean isValid) {
+        super(type, isValid);
     }
 }
