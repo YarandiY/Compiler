@@ -1,8 +1,8 @@
 package ir.ac.sbu;
 
 import ir.ac.sbu.lexical.Scanner;
-import ir.ac.sbu.semantic.CodeGenerator;
 import ir.ac.sbu.semantic.AST.Node;
+import ir.ac.sbu.semantic.CodeGenerator;
 import ir.ac.sbu.syntax.Parser;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -36,7 +36,7 @@ public class Main {
         // Create a Test class to put expression java bytecode inside it.
         // In java, every code must be put inside a class.
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        classWriter.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER, "Test", null, "java/lang/Object", null);
+        classWriter.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER, "$Main", null, "java/lang/Object", null);
 
         // Create constructor of Test class to call it's super class.
         // Every class has a default constructor which call super constructor. (In this example, Object constructor)

@@ -1,4 +1,5 @@
-function void start(){
-int a = 2;
+function void start()
+begin
+int a;
 return;
-}
+end

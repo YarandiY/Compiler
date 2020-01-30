@@ -30,7 +30,7 @@ public class Cast extends UnaryExp {
 
 
     //Just for int and long and double and float
-    private int getOpcode(Type from,Type to){
+    public static int getOpcode(Type from,Type to){
         int opcode;
         if(from == Type.INT_TYPE){
             if(to == Type.LONG_TYPE)

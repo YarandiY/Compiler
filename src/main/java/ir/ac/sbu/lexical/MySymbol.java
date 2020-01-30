@@ -4,11 +4,11 @@ public class MySymbol {
     private String token;
     private Object value;
 
-    MySymbol(String token) {
+    public MySymbol(String token) {
         this.token = token;
     }
 
-    MySymbol(String token, Object value) {
+    public MySymbol(String token, Object value) {
         this.token = token;
 
         this.value = value;

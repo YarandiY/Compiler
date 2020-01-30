@@ -4,8 +4,6 @@ import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.AST.declaration.record.RecordDcl;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ public class SymbolTableHandler {
         return instance;
     }
 
-    private FunctionDcl LastSeenFunction;
+    private FunctionDcl LastFunction;
     private boolean inLoop = false;
 
     private ArrayList<SymbolTable> stackScopes = new ArrayList<>();
@@ -121,10 +119,10 @@ public class SymbolTableHandler {
         SymbolTable symbolTable = new SymbolTable();
         symbolTable.setTypeOfScope(typeOfScope);
         if (typeOfScope != Scope.FUNCTION)
-            symbolTable.setIndex(getLastFrame().getIndex());
+            symbolTable.setIndex(getLastScope().getIndex());
         stackScopes.add(symbolTable);
     }
-    public SymbolTable getLastFrame() {
+    public SymbolTable getLastScope() {
         if (stackScopes.size() == 0)
             throw new RuntimeException("Something Goes Wrong");
 
@@ -162,13 +160,13 @@ public class SymbolTableHandler {
     //TODO global variable
     //declare a variable to the last symbol table
     public void addVariable(String name, DSCP dscp) {
-        if (getLastFrame().containsKey(name)) {
+        if (getLastScope().containsKey(name)) {
             throw new RuntimeException("the variable declare previously");
         }
         //TODO what about the global variables??? --> static fields
-        getLastFrame().put(name, dscp);
+        getLastScope().put(name, dscp);
         //if (dscp instanceof DSCP_DYNAMIC)
-          //  getLastFrame().addIndex(dscp.getType().getSize() - 1);
+          //  getLastScope().addIndex(dscp.getType().getSize() - 1);
     }
 
     public DSCP getDescriptor(String name) {
@@ -183,7 +181,7 @@ public class SymbolTableHandler {
 
     //TODO check it!
     public boolean canHaveBreak() {
-        if(getLastFrame().getTypeOfScope() == Scope.SWITCH)
+        if(getLastScope().getTypeOfScope() == Scope.SWITCH)
             return true;
         return inLoop;
     }
@@ -212,7 +210,7 @@ public class SymbolTableHandler {
     }
 
     public int newIndex() {
-        return getLastFrame().getNewIndex();
+        return getLastScope().getNewIndex();
     }
 
 

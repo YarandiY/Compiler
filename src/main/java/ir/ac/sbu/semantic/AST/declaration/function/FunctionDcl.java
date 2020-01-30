@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 @Data
 public class FunctionDcl implements Node {
@@ -27,6 +28,11 @@ public class FunctionDcl implements Node {
     private Block block;
 
     private List<FuncReturn> returns = new ArrayList<>();
+
+    public void add(FuncReturn funcReturn){
+        returns.add(funcReturn);
+    }
+
 
     public FunctionDcl(Type type, String name, Block block, ArrayList<VarDCL> parameters) {
         this.type = type;
@@ -64,13 +70,13 @@ public class FunctionDcl implements Node {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, name, this.signature,null,null);
+        MethodVisitor methodVisitor = cw.visitMethod(ACC_STATIC + ACC_PUBLIC, name, this.signature,null,null);
         // TODO : what about when we have just function's prototype??
         methodVisitor.visitCode();
 
         // add current function's symbol table to stackScope
         SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
-        SymbolTableHandler.getInstance().setLastSeenFunction(this);
+        SymbolTableHandler.getInstance().setLastFunction(this);
 
         parameters.forEach((param)->param.codegen(methodVisitor, cw));
         block.codegen(methodVisitor, cw);
