@@ -8,8 +8,8 @@ public class LocalVarDSCP extends LocalDSCP {
 
     protected boolean constant;
 
-    public LocalVarDSCP(Type type, boolean hasValue, int index, boolean constant) {
-        super(type, hasValue, index);
+    public LocalVarDSCP(Type type, boolean isValid, int index, boolean constant) {
+        super(type, isValid, index);
         this.constant = constant;
     }
 

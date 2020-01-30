@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Block implements Node {
 
     private ArrayList<Operation> operations;
+
     public Block(ArrayList<Operation> operations){
         this.operations = operations;
     }
@@ -17,8 +18,7 @@ public class Block implements Node {
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         if(operations == null)
             throw new RuntimeException("No expression found!");
-        for (Operation op :
-                operations) {
+        for (Operation op : operations) {
             op.codegen(mv, cw);
         }
     }

@@ -168,7 +168,7 @@ MultilpleCommentCharacter = [^\t\r\n#]
     {RealLiteral}       {return symbol("real_const", Double.valueOf(yytext()));}
     {ScientificLiteral} {return symbol("real_const", yytext());}
     /* WHITESPACE */
-    {WhiteSpace}        {/* skip */return symbol("");}
+    {WhiteSpace}        {/* skip */}
 }
 
 <CHARACTER>{
@@ -184,17 +184,17 @@ MultilpleCommentCharacter = [^\t\r\n#]
 }
 
 <SINGLE_COMMENT>{
-    \n                              {yybegin(YYINITIAL); StringBuilder temp = string; string = new StringBuilder(); return symbol("comment", temp.toString());}
-    {SingleCommentCharacter}+       {string.append(yytext());}
+    \n                              {yybegin(YYINITIAL);}
+    {SingleCommentCharacter}+       {}
 }
 
 <MULT_COMMENT>{
-    "#/"                            {yybegin(YYINITIAL); string.append("#/"); StringBuilder temp = string; string = new StringBuilder(); return symbol("comment", temp.toString());}
-    "#"                             {string.append(yytext());}
-    \n                              {string.append("");}
-    \r\n                            {string.append("");}
-    "	"                           {string.append("");}
-    {MultilpleCommentCharacter}+    {string.append(yytext());}
+    "#/"                            {yybegin(YYINITIAL);}
+    "#"                             {}
+    \n                              {}
+    \r\n                            {}
+    "	"                           {}
+    {MultilpleCommentCharacter}+    {}
 }
 
 [^]        { throw new RuntimeException("Illegal character \""+yytext()+

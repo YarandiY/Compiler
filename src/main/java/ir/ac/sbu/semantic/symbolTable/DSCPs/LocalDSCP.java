@@ -8,8 +8,8 @@ public abstract class LocalDSCP extends DSCP {
 
     protected int index;
 
-    public LocalDSCP(Type type, boolean hasValue, int index) {
-        super(type, hasValue);
+    public LocalDSCP(Type type, boolean isValid, int index) {
+        super(type, isValid);
         this.index = index;
     }
 }

@@ -2,88 +2,101 @@ package ir.ac.sbu.semantic.AST.declaration.function;
 
 import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.block.Block;
-import ir.ac.sbu.semantic.AST.declaration.variable.VarDcl;
+import ir.ac.sbu.semantic.AST.declaration.variable.VarDCL;
+import ir.ac.sbu.semantic.AST.statement.FuncReturn;
 import ir.ac.sbu.semantic.symbolTable.Scope;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 @Data
 public class FunctionDcl implements Node {
 
-   private Type type;
-   private String name;
-   private ArrayList<VarDcl> inputs;
-   private ArrayList<Type> inputsType;
-   private String signature;
-   private Block block;
+    private Type type;
+    private String name;
+    private ArrayList<VarDCL> parameters;
+    private List<Type> paramTypes;
+    private String signature;
+    private Block block;
 
-   public FunctionDcl(Type type, String name, Block block, ArrayList<VarDcl> inputs){
-       this.type = type;
-       this.name = name;
-       this.block = block;
-       this.inputs = inputs;
-       String signature = "(";
-       for(VarDcl varDcl : inputs){
-           signature = signature+varDcl.getType().toString();
-           inputsType.add(varDcl.getType());
-       }
-       signature = signature + ")";
-       signature = signature + type.toString();
-       this.signature = signature;
-       declare();
-   }
+    private List<FuncReturn> returns = new ArrayList<>();
 
-   public FunctionDcl(String name,String signature,Block block){
-       this.signature = signature;
-       Type[] types = Type.getArgumentTypes(signature);
-       Type [] arguments = types;
-       this.type = Type.getType(signature.substring(signature.indexOf(')')+1));
-       this.name = name;
-       inputsType = new ArrayList<>();
-       for(Type t : arguments){
-           inputsType.add(t);
-       }
-       this.block = block;
-       declare();
-   }
+    public FunctionDcl(Type type, String name, Block block, ArrayList<VarDCL> parameters) {
+        this.type = type;
+        this.name = name;
+        this.block = block;
+        this.parameters = parameters;
 
-    private void declare(){
-       SymbolTableHandler.getInstance().addFunction(this);
-   }
+        // to fill paramTypes and make signature
+        StringBuilder signature = new StringBuilder("(");
+        for (VarDCL parameter : parameters) {
+            signature.append(parameter.getType().toString());
+            paramTypes.add(parameter.getType());
+        }
+        signature.append(")");
+        signature.append(type.toString());
+        this.signature = signature.toString();
 
+        declare();
+    }
+
+    public FunctionDcl(String name, String signature, Block block) {
+        this.signature = signature;
+        paramTypes = Arrays.asList(Type.getArgumentTypes(signature));
+        this.type = Type.getType(signature.substring(signature.indexOf(')') + 1));
+        this.name = name;
+        this.block = block;
+
+        declare();
+    }
+
+    private void declare() {
+        SymbolTableHandler.getInstance().addFunction(this);
+    }
 
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        // cv.visitMethod(ACC_PUBLIC,name,this.signature,null,null); msdn version!
-       MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC,name,"",signature,null); //ab version!
-       methodVisitor.visitCode();
-       //TODO
-       SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
+        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC, name, this.signature,null,null);
+        // TODO : what about when we have just function's prototype??
+        methodVisitor.visitCode();
 
+        // add current function's symbol table to stackScope
+        SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
+        SymbolTableHandler.getInstance().setLastSeenFunction(this);
+
+        parameters.forEach((param)->param.codegen(methodVisitor, cw));
+        block.codegen(methodVisitor, cw);
+
+        if (returns.size() == 0)
+            throw new RuntimeException("You must use at least one return statement in function!");
+
+        // TODO: why 1, 1??
+        methodVisitor.visitMaxs(1, 1);
+        methodVisitor.visitEnd();
+        SymbolTableHandler.getInstance().popScope();
     }
 
     @Override
     public boolean equals(Object o) {
-       if(o instanceof FunctionDcl)
-           return checkIfEqual(((FunctionDcl) o).name,((FunctionDcl) o).inputsType);
-       return false;
+        return o instanceof FunctionDcl && checkIfEqual(((FunctionDcl) o).name, ((FunctionDcl) o).paramTypes);
     }
 
-    public boolean checkIfEqual(String name, ArrayList<Type> inputsType){
-       if(this.name != name)
-           return false;
-        for (Type type :
-                inputsType) {
-            if(!this.inputsType.contains(type))
+    // check if two functions are the same
+    public boolean checkIfEqual(String name, List<Type> paramTypes) {
+        if (this.name.equals(name))
+            return false;
+        if(paramTypes.size() != this.paramTypes.size())
+            return false;
+        for (int i = 0; i < paramTypes.size(); i++) {
+            if(!this.paramTypes.get(i).equals(paramTypes.get(i)))
                 return false;
         }
         return true;

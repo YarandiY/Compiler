@@ -4,6 +4,8 @@ import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.AST.declaration.record.RecordDcl;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -23,8 +25,8 @@ public class SymbolTableHandler {
         return instance;
     }
 
-    private static FunctionDcl LastSeenFunction;
-    private static boolean inLoop = false;
+    private FunctionDcl LastSeenFunction;
+    private boolean inLoop = false;
 
     private ArrayList<SymbolTable> stackScopes = new ArrayList<>();
     private HashMap<String, ArrayList<FunctionDcl>> funcDcls = new HashMap<>();
@@ -159,7 +161,7 @@ public class SymbolTableHandler {
 
     //TODO global variable
     //declare a variable to the last symbol table
-    public void addVariable(DSCP dscp, String name) {
+    public void addVariable(String name, DSCP dscp) {
         if (getLastFrame().containsKey(name)) {
             throw new RuntimeException("the variable declare previously");
         }
@@ -209,11 +211,9 @@ public class SymbolTableHandler {
         }
     }
 
-
-    //TODO --> koja estefade mishe khob?
-    /*public int returnNewIndex() {
-        return getLastFrame().getAndAddIndex();
-    }*/
+    public int newIndex() {
+        return getLastFrame().getNewIndex();
+    }
 
 
 }

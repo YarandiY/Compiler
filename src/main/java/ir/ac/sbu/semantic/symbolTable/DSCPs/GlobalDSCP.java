@@ -6,7 +6,7 @@ import org.objectweb.asm.Type;
 @Data
 public abstract class GlobalDSCP extends DSCP{
 
-    public GlobalDSCP(Type type, boolean hasValue) {
-        super(type, hasValue);
+    public GlobalDSCP(Type type, boolean isValid) {
+        super(type, isValid);
     }
 }
