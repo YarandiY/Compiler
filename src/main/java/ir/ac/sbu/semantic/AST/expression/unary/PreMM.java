@@ -9,22 +9,24 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 
 //TODO
-public class PPPostfix extends UnaryExp {
-    public PPPostfix(Expression operand) {
+public class PreMM extends UnaryExp {
+    public PreMM(Expression operand) {
         super(operand);
     }
 
+
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-
         if (!(operand instanceof Variable) || (type != Type.INT_TYPE && type != Type.DOUBLE_TYPE && type != Type.LONG_TYPE && type != Type.FLOAT_TYPE))
             throw new RuntimeException("the operand is wrong");
-        mv.visitInsn(type.getOpcode(ICONST_1));
+        mv.visitInsn(type.getOpcode(ICONST_M1));
         Variable variable = (Variable) operand;
+        //TODO
         //int index =
         variable.codegen(mv, cw); //to load the var in stack
-        variable.codegen(mv, cw);
         mv.visitInsn(type.getOpcode(IADD));
         //mv.visitVarInsn(type.getOpcode(ISTORE),index);
+        variable.codegen(mv, cw);
+
     }
 }

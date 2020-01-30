@@ -9,8 +9,8 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 
 //TODO
-public class MMPostfix extends UnaryExp {
-    public MMPostfix(Expression operand) {
+public class PostPP extends UnaryExp {
+    public PostPP(Expression operand) {
         super(operand);
     }
 
@@ -19,16 +19,13 @@ public class MMPostfix extends UnaryExp {
 
         if (!(operand instanceof Variable) || (type != Type.INT_TYPE && type != Type.DOUBLE_TYPE && type != Type.LONG_TYPE && type != Type.FLOAT_TYPE))
             throw new RuntimeException("the operand is wrong");
-
-        mv.visitInsn(type.getOpcode(ICONST_1));
         Variable variable = (Variable) operand;
+        //TODO
         //int index =
         variable.codegen(mv, cw); //to load the var in stack
-        variable.codegen(mv, cw); //to execute the operand
-        mv.visitInsn(type.getOpcode(ISUB));
+        variable.codegen(mv, cw);
+        mv.visitInsn(type.getOpcode(ICONST_1));
+        mv.visitInsn(type.getOpcode(IADD));
         //mv.visitVarInsn(type.getOpcode(ISTORE),index);
-
-
-
     }
 }

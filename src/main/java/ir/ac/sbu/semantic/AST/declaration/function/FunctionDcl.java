@@ -11,6 +11,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
@@ -70,7 +71,14 @@ public class FunctionDcl implements Node {
 
     }
 
-    public boolean checkIfEqual(String name,ArrayList<Type> inputsType){
+    @Override
+    public boolean equals(Object o) {
+       if(o instanceof FunctionDcl)
+           return checkIfEqual(((FunctionDcl) o).name,((FunctionDcl) o).inputsType);
+       return false;
+    }
+
+    public boolean checkIfEqual(String name, ArrayList<Type> inputsType){
        if(this.name != name)
            return false;
         for (Type type :

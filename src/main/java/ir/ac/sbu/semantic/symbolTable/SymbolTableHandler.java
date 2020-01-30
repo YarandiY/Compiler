@@ -115,6 +115,19 @@ public class SymbolTableHandler {
     public void popScope() {
         stackScopes.remove(stackScopes.size() - 1);
     }
+    public void addScope(Scope typeOfScope) {
+        SymbolTable symbolTable = new SymbolTable();
+        symbolTable.setTypeOfScope(typeOfScope);
+        if (typeOfScope != Scope.FUNCTION)
+            symbolTable.setIndex(getLastFrame().getIndex());
+        stackScopes.add(symbolTable);
+    }
+    public SymbolTable getLastFrame() {
+        if (stackScopes.size() == 0)
+            throw new RuntimeException("Something Goes Wrong");
+
+        return stackScopes.get(stackScopes.size() - 1);
+    }
 
 
     //To declare a function add it to funcDcls
@@ -124,9 +137,9 @@ public class SymbolTableHandler {
                 throw new RuntimeException("the function is duplicate!!!");
             funcDcls.get(funcDcl.getName()).add(funcDcl);
         } else {
-            ArrayList<FunctionDcl> funcDclMapper = new ArrayList<>();
-            funcDclMapper.add(funcDcl);
-            funcDcls.put(funcDcl.getName(), funcDclMapper);
+            ArrayList<FunctionDcl> funcDclList = new ArrayList<>();
+            funcDclList.add(funcDcl);
+            funcDcls.put(funcDcl.getName(), funcDclList);
         }
     }
 
@@ -157,22 +170,13 @@ public class SymbolTableHandler {
     }
 
     public DSCP getDescriptor(String name) {
-        int from = stackScopes.size();
-        while (from != 0) {
-            from--;
-            if (stackScopes.get(from).containsKey(name)) {
-                return stackScopes.get(from).get(name);
-            }
+        int symbolTbl = stackScopes.size() - 1;
+        while (symbolTbl >= 0) {
+            if (stackScopes.get(symbolTbl).containsKey(name))
+                return stackScopes.get(symbolTbl).get(name);
+            symbolTbl--;
         }
         throw new RuntimeException("the name doesn't exist");
-    }
-
-    public void addScope(Scope typeOfScope) {
-        SymbolTable symbolTable = new SymbolTable();
-        symbolTable.setTypeOfScope(typeOfScope);
-        if (typeOfScope != Scope.FUNCTION)
-            symbolTable.setIndex(getLastFrame().getIndex());
-        stackScopes.add(symbolTable);
     }
 
     //TODO check it!
@@ -191,7 +195,7 @@ public class SymbolTableHandler {
 
     public RecordDcl getRecord(String name) {
         if (recordDcls.containsKey(name))
-            throw new RuntimeException("Record BitwiseNot Found");
+            throw new RuntimeException("Record not Found");
 
         return recordDcls.get(name);
     }
@@ -212,10 +216,4 @@ public class SymbolTableHandler {
     }*/
 
 
-    public SymbolTable getLastFrame() {
-        if (stackScopes.size() == 0)
-            throw new RuntimeException("Something Goes Wrong");
-
-        return stackScopes.get(stackScopes.size() - 1);
-    }
 }
