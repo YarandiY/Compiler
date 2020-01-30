@@ -16,7 +16,7 @@ public class SymbolTableHandler {
     private static SymbolTableHandler instance = new SymbolTableHandler();
     private SymbolTableHandler() {
         SymbolTable globalSymTbl = new SymbolTable();
-        globalSymTbl.setIndex(1); //whay??
+        globalSymTbl.setIndex(1);
         stackScopes.add(globalSymTbl);
     }
     public static SymbolTableHandler getInstance() {
@@ -191,7 +191,7 @@ public class SymbolTableHandler {
 
     public RecordDcl getRecord(String name) {
         if (recordDcls.containsKey(name))
-            throw new RuntimeException("Record Not Found");
+            throw new RuntimeException("Record BitwiseNot Found");
 
         return recordDcls.get(name);
     }

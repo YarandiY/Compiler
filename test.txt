@@ -1,1 +1,4 @@
-int a = 2 + 2;
+function void start(){
+int a = 2;
+return;
+}
