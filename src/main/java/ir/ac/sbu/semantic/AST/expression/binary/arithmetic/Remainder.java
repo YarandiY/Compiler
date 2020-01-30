@@ -1,17 +1,15 @@
 package ir.ac.sbu.semantic.AST.expression.binary.arithmetic;
 
 import ir.ac.sbu.semantic.AST.expression.Expression;
-
 import ir.ac.sbu.semantic.AST.expression.binary.BinaryExp;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
+import static org.objectweb.asm.Opcodes.IREM;
 
-import static org.objectweb.asm.Opcodes.IADD;
+public class Remainder extends BinaryExp{
 
-public class Sum extends BinaryExp {
-
-    public Sum(Expression firstop, Expression secondop) {
+    public Remainder(Expression firstop, Expression secondop) {
         super(firstop, secondop);
     }
 
@@ -19,6 +17,6 @@ public class Sum extends BinaryExp {
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         firstop.codegen(mv, cw);
         secondop.codegen(mv, cw);
-        mv.visitInsn(type.getOpcode(IADD));
+        mv.visitInsn(type.getOpcode(IREM));
     }
 }

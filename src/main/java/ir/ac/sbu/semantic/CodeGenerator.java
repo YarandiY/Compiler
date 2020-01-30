@@ -1,7 +1,11 @@
 package ir.ac.sbu.semantic;
 
 import ir.ac.sbu.semantic.AST.Node;
+import ir.ac.sbu.semantic.AST.expression.Expression;
+import ir.ac.sbu.semantic.AST.expression.binary.arithmetic.*;
+import ir.ac.sbu.semantic.AST.expression.binary.conditional.*;
 import ir.ac.sbu.syntax.Lexical;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -24,7 +28,9 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "addFuncToMain" : break;
             case "pop" : semanticStack.pop();
                 break;
-            case "push" : semanticStack.push(lexical.nextToken());
+            case "push" :
+                //semanticStack.push(new IntegerConst((int) lexical.currentToken().getValue()));
+                semanticStack.push(lexical.nextToken());
                 break;
             case "mkArrDSCP" : break;
             case "addDimList" : break;
@@ -45,10 +51,107 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "putInST" : break;
             case "assign" : break;
             case "minDimNum" : break;
-            case "sum" : break;
-            case "minus" : break;
-            case "and" : break;
-            case "andBit" : break;
+            /* --------------------- binary expressions --------------------- */
+            /* ---------------------- Arithmetic ---------------------------- */
+            case "div" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new Divide(first, second));
+                break;
+            }
+            case "minus" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new Minus(first, second));
+                break;
+            }
+            case "mult" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new Multiply(first, second));
+                break;
+            }
+            case "rmn" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new Remainder(first, second));
+                break;
+            }
+            case "sum" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new Sum(first, second));
+                break;
+            }
+            /* ---------------------- conditional ------------------------- */
+            case "and" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new And(first, second));
+                break;
+            }
+            case "andBit" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new AndBit(first, second));
+                break;
+            }
+            case "biggerAndEqual" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new BiggerEqual(first, second));
+                break;
+            }
+            case "biggerThan" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new BiggerThan(first, second));
+                break;
+            }
+            case "equal" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new Equal(first, second));
+                break;
+            }
+            case "lessAndEqual" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new LessEqual(first, second));
+                break;
+            }
+            case "lessThan" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new LessThan(first, second));
+                break;
+            }
+            case "notEqual" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new NotEqual(first, second));
+                break;
+            }
+            case "or" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new OR(first, second));
+                break;
+            }
+            case "orBit" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new ORBit(first, second));
+                break;
+            }
+            case "XORBit" : {
+                Expression second = (Expression) semanticStack.pop();
+                Expression first = (Expression) semanticStack.pop();
+                semanticStack.push(new XORBit(first, second));
+                break;
+            }
+            /* --------------------------    ---------------------------- */
+            case "not" : break;
             case "addAssign" : break;
             case "minAssign" : break;
             case "divAssign" : break;
@@ -56,20 +159,12 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "rmnAssign" : break;
             case "break" : break;
             case "continue" : break;
-            case "lessThan" : break;
-            case "lessAndEqual" : break;
-            case "biggerThan" : break;
-            case "biggerAndEqual" : break;
             case "createIfST" : break;
             case "createElseST" : break;
             case "createSwitchST" : break;
             case "createNewCase" : break;
             case "createLookupTB" : break;
             case "createLookupTBDefault" : break;
-            case "equal" : break;
-            case "notEqual" : break;
-            case "or" : break;
-            case "not" : break;
             case "tilda" : break;
             case "doNot" : break;
             case "cast" : break;
@@ -82,11 +177,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "trueStepFlag" : break;
             case "JZFor" : break;
             case "JZForeach" : break;
-            case "mult" : break;
-            case "div" : break;
-            case "rmn" : break;
-            case "notBit" : break;
-            case "orBit" : break;
             case "print" : break;
             case "mkRecDSCP" : break;
             case "addDCLsList" : break;
@@ -101,7 +191,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             //case "mkSDSCP" : break;
             case "constTrue" : break;
             default:
-                System.out.println("the " + sem + " isn't here!!");
+                System.out.println("Illegal semantic function: " + sem);
 
         }
     }
