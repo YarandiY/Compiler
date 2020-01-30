@@ -19,10 +19,10 @@ public class Cast extends UnaryExp {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         operand.codegen(mv, cw);
-        Type from = type;
+        Type from = operand.getType();
         if(from == to)
             return;
-        if(to != Type.INT_TYPE || to != Type.LONG_TYPE || to != Type.DOUBLE_TYPE || to != Type.FLOAT_TYPE)
+        if(to != Type.INT_TYPE && to != Type.LONG_TYPE && to != Type.DOUBLE_TYPE && to != Type.FLOAT_TYPE)
             throw new RuntimeException("the cast is wrong!!");
         mv.visitInsn(getOpcode(from,to));
         type = to;

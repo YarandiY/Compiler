@@ -6,10 +6,10 @@ import org.objectweb.asm.Type;
 @Data
 public abstract class DSCP {
     protected Type type;
-    protected boolean hasValue;
+    protected boolean isValid;
 
     public DSCP(Type type, boolean hasValue) {
         this.type = type;
-        this.hasValue = hasValue;
+        this.isValid = hasValue;
     }
 }

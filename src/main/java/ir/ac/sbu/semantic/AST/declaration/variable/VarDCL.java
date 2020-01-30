@@ -5,11 +5,10 @@ import lombok.Data;
 import org.objectweb.asm.Type;
 
 @Data
-public abstract class VarDcl implements Operation {
+public abstract class VarDCL implements Operation {
 
     protected String name;
     protected Type type = null;
     protected boolean constant = false;
     protected boolean global = true;
-
 }

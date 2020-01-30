@@ -10,8 +10,8 @@ public class GlobalArrDSCP extends GlobalDSCP {
 
     protected ArrayList<Integer> dimList;
 
-    public GlobalArrDSCP(Type type, boolean hasValue, ArrayList<Integer> dimList) {
-        super(type, hasValue);
+    public GlobalArrDSCP(Type type, boolean isValid, ArrayList<Integer> dimList) {
+        super(type, isValid);
         this.dimList = dimList;
     }
 

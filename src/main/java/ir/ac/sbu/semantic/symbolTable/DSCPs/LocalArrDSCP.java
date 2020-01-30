@@ -9,12 +9,12 @@ import java.util.ArrayList;
 public class LocalArrDSCP extends LocalDSCP {
     protected ArrayList<Integer> dimList;
 
-    public LocalArrDSCP(Type type, boolean hasValue, int index, ArrayList<Integer> dimList) {
-        super(type, hasValue, index);
+    public LocalArrDSCP(Type type, boolean isValid, int index, ArrayList<Integer> dimList) {
+        super(type, isValid, index);
         this.dimList = dimList;
     }
 
-    public LocalArrDSCP(Type type, boolean hasValue, int index) {
-        super(type, hasValue, index);
+    public LocalArrDSCP(Type type, boolean isValid, int index) {
+        super(type, isValid, index);
     }
 }

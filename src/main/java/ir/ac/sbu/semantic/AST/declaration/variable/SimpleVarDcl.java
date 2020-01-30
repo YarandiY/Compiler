@@ -3,6 +3,9 @@ package ir.ac.sbu.semantic.AST.declaration.variable;
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.constant.ConstantExp;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
+import ir.ac.sbu.semantic.symbolTable.DSCPs.GlobalVarDSCP;
+import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalVarDSCP;
+import ir.ac.sbu.semantic.symbolTable.SymbolTable;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import lombok.Data;
 import org.objectweb.asm.ClassWriter;
@@ -13,7 +16,7 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 
 @Data
-public class SimpleVarDcl extends VarDcl {
+public class SimpleVarDcl extends VarDCL {
 
     private Expression exp;
     private String stringType;
@@ -28,7 +31,7 @@ public class SimpleVarDcl extends VarDcl {
     public SimpleVarDcl(String varName, String type, boolean constant, boolean global, Expression exp) {
         name = varName;
         stringType = type;
-        if (type != "auto") {
+        if (!type.equals("auto")) {
             this.type = SymbolTableHandler.getTypeFromName(type);
         } else {
             if (exp == null)
@@ -43,52 +46,63 @@ public class SimpleVarDcl extends VarDcl {
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         if (type == null)
             phonyExpExe();
+
+        // to fill DSCP and add to Symbol table
         declare();
+
         if(global){
-            int access = ACC_PUBLIC + ACC_STATIC;
-            access += constant ? ACC_FINAL : 0;
             Object value = null;
             if(exp != null){
                 executeGlobalExp(cw);
                 value = ((ConstantExp) exp).getValue();
             }
-            FieldVisitor fv = cw.visitField(access, name, type.getDescriptor(), null, value);
-            fv.visitEnd();
-        }else if (exp != null && !global) {
+            cw.visitField(ACC_STATIC, name, type.getDescriptor(),
+                    null, value).visitEnd();
+        }
+        else if (exp != null) {
             exp.codegen(mv, cw);
             if (exp.getType() != type)
                 throw new RuntimeException("the type of variable and expression doesn't match");
-            //TODO: it depends on DSCPs
-            // mv.visitVarInsn(getType().getOpcode(ISTORE), dscpDynamic.getIndex());
-
+            LocalVarDSCP dscp = (LocalVarDSCP) SymbolTableHandler.getInstance().getDescriptor(name);
+            mv.visitVarInsn(getType().getOpcode(ISTORE), dscp.getIndex());
         }
     }
 
 
-    //TODO : I doubt it!
     private void phonyExpExe() {
-        TempMethodVisitor tempMV = new TempMethodVisitor(0);
-        ClassWriter tempCW = new ClassWriter(0);
+        TempMethodVisitor tempMV = new TempMethodVisitor();
+        TempClassWriter tempCW = new TempClassWriter();
         exp.codegen(tempMV,tempCW);
         type = exp.getType();
     }
 
-    //TODO
     private void executeGlobalExp(ClassWriter cw){
-        // MethodVisitor mv = cw.visitMethod(ACC_STATIC,"<clinit>",())
+        MethodVisitor mv = cw.visitMethod(ACC_STATIC, "<clinit>",
+                "()V", null, null);
+        mv.visitCode();
+        exp.codegen(mv, cw);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     private void declare() {
-        if (name == null || type == null)
-            throw new RuntimeException("the name or type for the var dcl is null");
-//        DSCP dscp = new DSCP();
-//        SymbolTableHandler.getInstance().addVariable(dscp, name);
-        //TODO global variables --> needs DSCPs
+        DSCP dscp;
+        if (!global)
+            dscp = new LocalVarDSCP(type, exp != null,
+                    SymbolTableHandler.getInstance().newIndex(), constant);
+        else
+            dscp = new GlobalVarDSCP(type, exp != null, constant);
+
+        SymbolTableHandler.getInstance().addVariable(name, dscp);
     }
 }
 
 class TempMethodVisitor extends MethodVisitor {
-    public TempMethodVisitor(int i) {
+    public TempMethodVisitor() {
         super(327680);
     }
+}
+
+class TempClassWriter extends ClassWriter{
+    public TempClassWriter() { super(327680); }
 }

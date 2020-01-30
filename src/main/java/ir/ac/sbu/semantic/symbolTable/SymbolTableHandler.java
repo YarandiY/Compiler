@@ -4,6 +4,8 @@ import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.AST.declaration.record.RecordDcl;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -23,8 +25,8 @@ public class SymbolTableHandler {
         return instance;
     }
 
-    private static FunctionDcl LastSeenFunction;
-    private static boolean inLoop = false;
+    private FunctionDcl LastSeenFunction;
+    private boolean inLoop = false;
 
     private ArrayList<SymbolTable> stackScopes = new ArrayList<>();
     private HashMap<String, ArrayList<FunctionDcl>> funcDcls = new HashMap<>();
@@ -115,6 +117,19 @@ public class SymbolTableHandler {
     public void popScope() {
         stackScopes.remove(stackScopes.size() - 1);
     }
+    public void addScope(Scope typeOfScope) {
+        SymbolTable symbolTable = new SymbolTable();
+        symbolTable.setTypeOfScope(typeOfScope);
+        if (typeOfScope != Scope.FUNCTION)
+            symbolTable.setIndex(getLastFrame().getIndex());
+        stackScopes.add(symbolTable);
+    }
+    public SymbolTable getLastFrame() {
+        if (stackScopes.size() == 0)
+            throw new RuntimeException("Something Goes Wrong");
+
+        return stackScopes.get(stackScopes.size() - 1);
+    }
 
 
     //To declare a function add it to funcDcls
@@ -124,9 +139,9 @@ public class SymbolTableHandler {
                 throw new RuntimeException("the function is duplicate!!!");
             funcDcls.get(funcDcl.getName()).add(funcDcl);
         } else {
-            ArrayList<FunctionDcl> funcDclMapper = new ArrayList<>();
-            funcDclMapper.add(funcDcl);
-            funcDcls.put(funcDcl.getName(), funcDclMapper);
+            ArrayList<FunctionDcl> funcDclList = new ArrayList<>();
+            funcDclList.add(funcDcl);
+            funcDcls.put(funcDcl.getName(), funcDclList);
         }
     }
 
@@ -146,7 +161,7 @@ public class SymbolTableHandler {
 
     //TODO global variable
     //declare a variable to the last symbol table
-    public void addVariable(DSCP dscp, String name) {
+    public void addVariable(String name, DSCP dscp) {
         if (getLastFrame().containsKey(name)) {
             throw new RuntimeException("the variable declare previously");
         }
@@ -157,22 +172,13 @@ public class SymbolTableHandler {
     }
 
     public DSCP getDescriptor(String name) {
-        int from = stackScopes.size();
-        while (from != 0) {
-            from--;
-            if (stackScopes.get(from).containsKey(name)) {
-                return stackScopes.get(from).get(name);
-            }
+        int symbolTbl = stackScopes.size() - 1;
+        while (symbolTbl >= 0) {
+            if (stackScopes.get(symbolTbl).containsKey(name))
+                return stackScopes.get(symbolTbl).get(name);
+            symbolTbl--;
         }
         throw new RuntimeException("the name doesn't exist");
-    }
-
-    public void addScope(Scope typeOfScope) {
-        SymbolTable symbolTable = new SymbolTable();
-        symbolTable.setTypeOfScope(typeOfScope);
-        if (typeOfScope != Scope.FUNCTION)
-            symbolTable.setIndex(getLastFrame().getIndex());
-        stackScopes.add(symbolTable);
     }
 
     //TODO check it!
@@ -191,7 +197,7 @@ public class SymbolTableHandler {
 
     public RecordDcl getRecord(String name) {
         if (recordDcls.containsKey(name))
-            throw new RuntimeException("Record BitwiseNot Found");
+            throw new RuntimeException("Record not Found");
 
         return recordDcls.get(name);
     }
@@ -205,17 +211,9 @@ public class SymbolTableHandler {
         }
     }
 
-
-    //TODO --> koja estefade mishe khob?
-    /*public int returnNewIndex() {
-        return getLastFrame().getAndAddIndex();
-    }*/
-
-
-    public SymbolTable getLastFrame() {
-        if (stackScopes.size() == 0)
-            throw new RuntimeException("Something Goes Wrong");
-
-        return stackScopes.get(stackScopes.size() - 1);
+    public int newIndex() {
+        return getLastFrame().getNewIndex();
     }
+
+
 }
