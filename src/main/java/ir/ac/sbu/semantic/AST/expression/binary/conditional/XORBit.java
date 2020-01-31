@@ -7,7 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.IXOR;
 
-public class XORBit extends BinaryExp {
+public class XORBit extends BinaryExp { //^
 
     public XORBit(Expression firstop, Expression secondop) {
         super(firstop, secondop);

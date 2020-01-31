@@ -4,6 +4,7 @@ import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.binary.arithmetic.*;
 import ir.ac.sbu.semantic.AST.expression.binary.conditional.*;
+import ir.ac.sbu.semantic.AST.expression.constant.IntegerConst;
 import ir.ac.sbu.syntax.Lexical;
 
 import java.util.ArrayDeque;
@@ -29,14 +30,16 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "pop" : semanticStack.pop();
                 break;
             case "push" :
-                //semanticStack.push(new IntegerConst((int) lexical.currentToken().getValue()));
-                semanticStack.push(lexical.nextToken());
+                //semanticStack.push(lexical.nextToken());
                 break;
             case "mkArrDSCP" : break;
             case "addDimList" : break;
-            case "pushReal" : semanticStack.push(lexical.nextToken());
+            case "pushReal" : //semanticStack.push(lexical.nextToken());
                 break;
-            case "pushInt" : break;
+            case "pushInt" : {
+                semanticStack.push(new IntegerConst((int) lexical.currentToken().getValue()));
+                break;
+            }
             case "premm" : break;
             case "prepp" : break;
             case "mkptr" : break;
@@ -144,7 +147,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(new ORBit(first, second));
                 break;
             }
-            case "XORBit" : {
+            case "xorBit" : {
                 Expression second = (Expression) semanticStack.pop();
                 Expression first = (Expression) semanticStack.pop();
                 semanticStack.push(new XORBit(first, second));
@@ -165,8 +168,8 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "createNewCase" : break;
             case "createLookupTB" : break;
             case "createLookupTBDefault" : break;
-            case "tilda" : break;
-            case "doNot" : break;
+            case "bitwiseNot" : break;
+            case "negative" : break;
             case "cast" : break;
             case "inputLine" : break;
             case "input" : break;

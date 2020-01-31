@@ -21,4 +21,9 @@ public class MySymbol {
     public Object getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }
