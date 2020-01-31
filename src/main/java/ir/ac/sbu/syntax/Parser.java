@@ -1,5 +1,4 @@
 package ir.ac.sbu.syntax;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,6 +34,8 @@ class LLCell {
 
 
 public class Parser {
+    public static String TABLE_DELIMITER = ",";
+
     private Lexical lexical;
     private CodeGenerator codeGenerator;
 
@@ -57,28 +58,32 @@ public class Parser {
         try {
             Scanner in = new Scanner(new FileInputStream(nptPath));
             String[] tmpArr = in.nextLine().trim().split(" ");
-            int rowSize = Integer.valueOf(tmpArr[0]);
-            int colSize = Integer.valueOf(tmpArr[1]);
-            startNode = Integer.valueOf(in.nextLine());
-            symbols = in.nextLine().trim().split(" ");
+            int rowSize = Integer.parseInt(tmpArr[0]);
+            int colSize = Integer.parseInt(tmpArr[1]);
+            startNode = Integer.parseInt(in.nextLine());
+            symbols = in.nextLine().trim().split(TABLE_DELIMITER);
 
             parseTable = new LLCell[rowSize][colSize];
             for (int i = 0; i < rowSize; i++) {
-                tmpArr = in.nextLine().trim().split(" ");
-                if (tmpArr.length != colSize * 3) {
-                    throw new RuntimeException("Invalid .npt file");
+                tmpArr = in.nextLine().trim().split(TABLE_DELIMITER);
+                if (tmpArr.length != colSize) {
+                    throw new RuntimeException("Invalid .npt file. File contains rows with length" +
+                            " bigger than column size.");
                 }
 
                 for (int j = 0; j < colSize; j++) {
-                    parseTable[i][j] = new LLCell(Action.values()[Integer.parseInt((tmpArr[j * 3]))],
-                            Integer.parseInt(tmpArr[j * 3 + 1]),
-                            tmpArr[j * 3 + 2]);
+                    String[] cellParts = tmpArr[j].split(" ");
+                    if (cellParts.length != 3) {
+                        throw new RuntimeException("Invalid .npt file. File contains cells with 3 values.");
+                    }
+                    parseTable[i][j] = new LLCell(Action.values()[Integer.parseInt(cellParts[0])],
+                            Integer.parseInt(cellParts[1]), cellParts[2]);
                 }
             }
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            throw new RuntimeException("Invalid .npt file");
+            throw new RuntimeException("Invalid .npt file.");
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Unable to load .npt file", e);
+            throw new RuntimeException("Unable to load .npt file.", e);
         }
     }
 

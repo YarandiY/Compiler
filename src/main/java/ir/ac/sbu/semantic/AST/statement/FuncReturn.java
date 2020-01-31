@@ -38,7 +38,7 @@ public class FuncReturn extends Statement {
         if(expression == null)
             mv.visitInsn(RETURN);
         else {
-            Cast.getOpcode(expression.getType(),functionDcl.getType());
+            mv.visitInsn(Cast.getOpcode(expression.getType(),functionDcl.getType()));
             mv.visitInsn(expression.getType().getOpcode(IRETURN));
         }
 
