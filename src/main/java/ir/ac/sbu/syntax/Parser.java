@@ -1,8 +1,10 @@
 package ir.ac.sbu.syntax;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 enum Action {
     ERROR, SHIFT, GOTO, PUSH_GOTO, REDUCE, ACCEPT
@@ -11,12 +13,12 @@ enum Action {
 class LLCell {
     private Action action;
     private int target;
-    private String function;
+    private List<String> functions;
 
-    public LLCell(Action action, int target, String function) {
+    public LLCell(Action action, int target, List<String> functions) {
         this.action = action;
         this.target = target;
-        this.function = function;
+        this.functions = functions;
     }
 
     public Action getAction() {
@@ -27,8 +29,8 @@ class LLCell {
         return target;
     }
 
-    public String getFunction() {
-        return function;
+    public List<String> getFunction() {
+        return functions;
     }
 }
 
@@ -38,6 +40,7 @@ public class Parser {
 
     private Lexical lexical;
     private CodeGenerator codeGenerator;
+    private boolean debugMode;
 
     private String[] symbols;
     private LLCell[][] parseTable;
@@ -45,6 +48,11 @@ public class Parser {
     private Deque<Integer> parseStack = new ArrayDeque<>();
 
     private List<String> recoveryState;
+
+    public Parser(Lexical lexical, CodeGenerator codeGenerator, String nptPath, boolean debugMode) {
+        this(lexical, codeGenerator, nptPath);
+        this.debugMode = debugMode;
+    }
 
     public Parser(Lexical lexical, CodeGenerator codeGenerator, String nptPath) {
         this.lexical = lexical;
@@ -76,8 +84,16 @@ public class Parser {
                     if (cellParts.length != 3) {
                         throw new RuntimeException("Invalid .npt file. File contains cells with 3 values.");
                     }
-                    parseTable[i][j] = new LLCell(Action.values()[Integer.parseInt(cellParts[0])],
-                            Integer.parseInt(cellParts[1]), cellParts[2]);
+                    Action action = Action.values()[Integer.parseInt(cellParts[0])];
+                    int target = Integer.parseInt(cellParts[1]);
+                    List<String> allFunctions;
+                    if (cellParts[2].equals("NoSem")) {
+                        allFunctions = new ArrayList<>();
+                    } else {
+                        allFunctions = Arrays.stream(cellParts[2].substring(1).split("[;]"))
+                                .filter(s -> !s.isEmpty()).collect(Collectors.toList());
+                    }
+                    parseTable[i][j] = new LLCell(action, target, allFunctions);
                 }
             }
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
@@ -94,6 +110,15 @@ public class Parser {
         while (!accepted) {
             String tokenText = symbols[tokenID];
             LLCell cell = parseTable[currentNode][tokenID];
+            if (debugMode) {
+                System.out.println("Current token: text='" + symbols[tokenID] + "' id=" + tokenID);
+                System.out.println("Current node: " + currentNode);
+                System.out.println("Current cell of parser table: " +
+                        "target-node=" + cell.getTarget() +
+                        " action=" + cell.getAction() +
+                        " function=" + cell.getFunction());
+                System.out.println(String.join("", Collections.nCopies(50, "-")));
+            }
             switch (cell.getAction()) {
                 case ERROR:
                     updateRecoveryState(currentNode, tokenText);
@@ -132,8 +157,10 @@ public class Parser {
     }
 
     private void generateError(String message) {
+        System.out.flush();
+        System.out.println("Error happened while parsing ...");
         for (String state : recoveryState) {
-            System.err.println(state);
+            System.out.println(state);
         }
         throw new RuntimeException(message);
     }
@@ -152,23 +179,22 @@ public class Parser {
     private int nextTokenID() {
         String token = lexical.nextToken();
         for (int i = 0; i < symbols.length; i++) {
-            if (symbols[i].equalsIgnoreCase(token)) {
+            if (symbols[i].equals(token)) {
                 return i;
             }
         }
         throw new RuntimeException("Undefined token: " + token);
     }
 
-    private void doSemantics(String semantics) {
-        if (semantics.equals("NoSem")) {
+    private void doSemantics(List<String> functions) {
+        if (functions.isEmpty()) {
             return;
         }
-        semantics = semantics.substring(1);
-        String[] allFunctions = semantics.split("[;]");
-        for (String function : allFunctions) {
-            if (function.length() > 0) {
-                codeGenerator.doSemantic(function);
-            }
+        if (debugMode) {
+            System.out.println("Execute semantic codes: " + functions);
+        }
+        for (String function : functions) {
+            codeGenerator.doSemantic(function);
         }
     }
 }
