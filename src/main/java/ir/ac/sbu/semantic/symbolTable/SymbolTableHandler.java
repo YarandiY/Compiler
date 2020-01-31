@@ -4,6 +4,7 @@ import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.AST.declaration.record.RecordDcl;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import lombok.Data;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -107,6 +108,21 @@ public class SymbolTableHandler {
 
         }
         return type;
+    }
+
+    public static int getTType(Type type){
+        if(type == Type.INT_TYPE)
+            return Opcodes.T_INT;
+        else if(type == Type.LONG_TYPE)
+            return Opcodes.T_LONG;
+        else if(type == Type.DOUBLE_TYPE)
+            return Opcodes.T_DOUBLE;
+        else if(type == Type.CHAR_TYPE)
+            return Opcodes.T_CHAR;
+        else if(type == Type.BOOLEAN_TYPE)
+            return Opcodes.T_BOOLEAN;
+        else
+            throw new RuntimeException("Should Not Happen");
     }
 
     public Set<String> getFuncNames() {

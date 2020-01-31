@@ -14,6 +14,8 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class SimpleVarDcl extends VarDCL {
 
+
+    private boolean constant = false;
     private Expression exp;
     private String stringType;
 

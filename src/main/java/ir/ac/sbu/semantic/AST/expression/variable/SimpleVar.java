@@ -14,7 +14,6 @@ public class SimpleVar extends Variable{
         this.name = name;
     }
 
-
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         DSCP dscp = getDSCP();

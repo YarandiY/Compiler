@@ -9,6 +9,5 @@ import org.objectweb.asm.Type;
 public abstract class VarDCL implements Operation, InitExp {
     protected String name;
     protected Type type = null;
-    protected boolean constant = false;
     protected boolean global = true;
 }

@@ -3,7 +3,6 @@ package ir.ac.sbu.semantic.AST.statement.loop;
 import ir.ac.sbu.semantic.AST.block.Block;
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.binary.conditional.NotEqual;
-import ir.ac.sbu.semantic.AST.expression.constant.BooleanConst;
 import ir.ac.sbu.semantic.AST.expression.constant.IntegerConst;
 import ir.ac.sbu.semantic.AST.expression.unary.PostMM;
 import ir.ac.sbu.semantic.AST.expression.unary.PostPP;
