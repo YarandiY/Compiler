@@ -78,7 +78,7 @@ MultilpleCommentCharacter = [^\t\r\n#]
     ">"     { return symbol(">");}
     ">="    { return symbol(">=");}
     "="     { return symbol("=");}
-    "~"     { return symbol("~");}
+    "~"     { return symbol("tilda");}
     "&"     { return symbol("&");}
     "|"     { return symbol("|");}
     "^"     { return symbol("^");}
@@ -99,12 +99,12 @@ MultilpleCommentCharacter = [^\t\r\n#]
     "("     { return symbol("(");}
     ")"     { return symbol(")");}
     "."     { return symbol(".");}
-    ","     { return symbol(",");}
+    ","     { return symbol("va");}
     ":"     { return symbol(":");}
     ";"     { return symbol(";");}
     "["     { return symbol("[");}
     "]"     { return symbol("]");}
-    "]["     { return symbol(",");}
+    "]["     { return symbol("va");}
     "++"    { return symbol("++");}
     "--"    { return symbol("--");}
     "-"     { return symbol("-");}
@@ -200,3 +200,26 @@ MultilpleCommentCharacter = [^\t\r\n#]
 [^]        { throw new RuntimeException("Illegal character \""+yytext()+
                                         "\" at line "+yyline+", column "+yycolumn); }
 <<EOF>>    {return symbol("$");}
+
+/*After create Scanner file you must change somewheres :
+    **set the package name
+    **import HashSet<>
+    **make the class and it's constructor public
+    **implement it from Lexical
+    **add 'private MySymbol currentSymbol = null;' field
+    **add '@Override
+            public String nextToken() {
+              try {
+                currentSymbol = next_token();
+                return currentSymbol.getToken();
+              }catch (IOException e){
+                throw new RuntimeException("Unable to get next token", e);
+              }
+            }
+
+            @Override
+            public MySymbol currentToken() {
+              return currentSymbol;
+            }'
+        methods
+*/

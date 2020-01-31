@@ -4,5 +4,5 @@ public enum Scope {
     FUNCTION,
     LOOP,
     SWITCH,
-    COND_OTHER_THAN_SWITCH
+    IF
 }

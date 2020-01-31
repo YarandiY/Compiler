@@ -15,10 +15,10 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
 public class FuncCall extends Expression {
 
-    String id;
-    List<Expression> parameters;
+    private String id;
+    private List<Expression> parameters;
 
-    FunctionDcl func;
+    private FunctionDcl func;
 
     public FuncCall(String id, ArrayList<Expression> parameters) {
         this.id = id;
