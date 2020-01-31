@@ -9,6 +9,5 @@ public abstract class VarDCL implements Operation {
 
     protected String name;
     protected Type type = null;
-    protected boolean constant = false;
     protected boolean global = true;
 }

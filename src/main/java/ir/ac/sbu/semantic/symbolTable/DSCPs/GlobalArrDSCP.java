@@ -1,16 +1,16 @@
 package ir.ac.sbu.semantic.symbolTable.DSCPs;
 
+import ir.ac.sbu.semantic.AST.expression.Expression;
 import lombok.Data;
 import org.objectweb.asm.Type;
-
-import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class GlobalArrDSCP extends GlobalDSCP {
 
-    protected ArrayList<Integer> dimList;
+    protected List<Expression> dimList;
 
-    public GlobalArrDSCP(Type type, boolean isValid, ArrayList<Integer> dimList) {
+    public GlobalArrDSCP(Type type, boolean isValid, List<Expression> dimList) {
         super(type, isValid);
         this.dimList = dimList;
     }
