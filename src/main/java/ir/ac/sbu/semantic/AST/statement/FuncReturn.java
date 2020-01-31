@@ -5,14 +5,12 @@ import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.unary.Cast;
 import ir.ac.sbu.semantic.symbolTable.SymbolTable;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
-import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
-@Data
 public class FuncReturn extends Statement {
 
     private Expression expression;

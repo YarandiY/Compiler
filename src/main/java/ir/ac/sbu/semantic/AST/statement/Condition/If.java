@@ -16,11 +16,13 @@ import static org.objectweb.asm.Opcodes.IFEQ;
 
 public class If extends Statement {
 
-    private Expression exp;
+    private Expression expression;
     private Block ifBlock, elseBlock;
+    private Label startElse = new Label();
+    private Label endElse = new Label();
 
-    public If(Expression exp, Block ifBlock, Block elseBlock) {
-        this.exp = exp;
+    public If(Expression expression, Block ifBlock, Block elseBlock) {
+        this.expression = expression;
         this.ifBlock = ifBlock;
         this.elseBlock = elseBlock;
     }
@@ -28,10 +30,8 @@ public class If extends Statement {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         SymbolTableHandler.getInstance().addScope(Scope.IF);
-        NotEqual notEqual = new NotEqual(exp, new IntegerConst(0));
+        NotEqual notEqual = new NotEqual(expression, new IntegerConst(0));
         notEqual.codegen(mv, cw);
-        Label startElse = new Label();
-        Label endElse = new Label();
         mv.visitJumpInsn(IFEQ, startElse);
         ifBlock.codegen(mv, cw);
         mv.visitJumpInsn(GOTO, endElse);

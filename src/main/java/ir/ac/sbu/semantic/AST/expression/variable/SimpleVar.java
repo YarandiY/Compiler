@@ -2,14 +2,12 @@ package ir.ac.sbu.semantic.AST.expression.variable;
 
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalVarDSCP;
-import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.GETSTATIC;
 import static org.objectweb.asm.Opcodes.ILOAD;
 
-@Data
 public class SimpleVar extends Variable{
 
     public SimpleVar(String name){

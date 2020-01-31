@@ -34,13 +34,13 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(lexical.currentToken().getValue()); //its string!!
                 break;
             }
+            case "pop":
+                semanticStack.pop();
+                break;
             /* ---------------------       --------------------- */
             case "mkFuncDSCP":
                 break;
             case "addFuncToMain":
-                break;
-            case "pop":
-                semanticStack.pop();
                 break;
             case "mkArrDSCP":
                 break;

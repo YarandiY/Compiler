@@ -2,6 +2,8 @@ package ir.ac.sbu.semantic.AST.expression.unary;
 
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.variable.Variable;
+import ir.ac.sbu.semantic.AST.statement.loop.InitExp;
+import ir.ac.sbu.semantic.AST.statement.loop.StepExp;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -9,7 +11,7 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 
 //TODO
-public class PreMM extends UnaryExp {
+public class PreMM extends UnaryExp implements InitExp, StepExp {
     public PreMM(Expression operand) {
         super(operand);
     }

@@ -6,7 +6,7 @@ import org.objectweb.asm.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public abstract class CondExp extends BinaryExp {
+abstract class CondExp extends BinaryExp {
 
     CondExp(Expression firstop, Expression secondop) {
         super(firstop, secondop);

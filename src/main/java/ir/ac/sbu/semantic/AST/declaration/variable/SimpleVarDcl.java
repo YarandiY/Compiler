@@ -5,17 +5,13 @@ import ir.ac.sbu.semantic.AST.expression.constant.ConstantExp;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.GlobalVarDSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalVarDSCP;
-import ir.ac.sbu.semantic.symbolTable.SymbolTable;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
-import lombok.Data;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
-@Data
 public class SimpleVarDcl extends VarDCL {
 
     private Expression exp;
