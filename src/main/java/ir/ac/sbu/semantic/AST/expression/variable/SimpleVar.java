@@ -24,6 +24,4 @@ public class SimpleVar extends Variable{
             mv.visitFieldInsn(GETSTATIC, cw.toString(), name, type.getDescriptor());
         }
     }
-
-    // TODO : store value from stack --> method
 }
