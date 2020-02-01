@@ -2,6 +2,7 @@ package ir.ac.sbu.semantic.AST.declaration.function;
 
 import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.block.Block;
+import ir.ac.sbu.semantic.AST.declaration.Declaration;
 import ir.ac.sbu.semantic.AST.declaration.variable.VarDCL;
 import ir.ac.sbu.semantic.AST.statement.FuncReturn;
 import ir.ac.sbu.semantic.symbolTable.Scope;
@@ -18,7 +19,7 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 @Data
-public class FunctionDcl implements Node {
+public class FunctionDcl implements Declaration {
 
     private Type type;
     private String name;
@@ -29,8 +30,13 @@ public class FunctionDcl implements Node {
 
     private List<FuncReturn> returns = new ArrayList<>();
 
-    public void add(FuncReturn funcReturn){
+    public void addReturn(FuncReturn funcReturn){
         returns.add(funcReturn);
+    }
+
+
+    public void addParameter(VarDCL parameter){
+        parameters.add(parameter);
     }
 
 
@@ -49,8 +55,6 @@ public class FunctionDcl implements Node {
         signature.append(")");
         signature.append(type.toString());
         this.signature = signature.toString();
-
-        declare();
     }
 
     public FunctionDcl(String name, String signature, Block block) {
@@ -59,8 +63,6 @@ public class FunctionDcl implements Node {
         this.type = Type.getType(signature.substring(signature.indexOf(')') + 1));
         this.name = name;
         this.block = block;
-
-        declare();
     }
 
     private void declare() {
@@ -70,17 +72,14 @@ public class FunctionDcl implements Node {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
+        declare();
         MethodVisitor methodVisitor = cw.visitMethod(ACC_STATIC + ACC_PUBLIC, name, this.signature,null,null);
-        // TODO : what about when we have just function's prototype??
         methodVisitor.visitCode();
-
-        // add current function's symbol table to stackScope
+        // addReturn current function's symbol table to stackScope
         SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
         SymbolTableHandler.getInstance().setLastFunction(this);
-
         parameters.forEach((param)->param.codegen(methodVisitor, cw));
         block.codegen(methodVisitor, cw);
-
         if (returns.size() == 0)
             throw new RuntimeException("You must use at least one return statement in function!");
 

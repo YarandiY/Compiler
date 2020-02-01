@@ -146,12 +146,19 @@ public class SymbolTableHandler {
     }
 
 
-    //To declare a function add it to funcDcls
+    //To declare a function addReturn it to funcDcls
     public void addFunction(FunctionDcl funcDcl) {
         if (funcDcls.containsKey(funcDcl.getName())) {
-            if(funcDcls.get(funcDcl.getName()).contains(funcDcl))
-                throw new RuntimeException("the function is duplicate!!!");
-            funcDcls.get(funcDcl.getName()).add(funcDcl);
+            if(funcDcls.get(funcDcl.getName()).contains(funcDcl)){
+                int index = funcDcls.get(funcDcl.getName()).indexOf(funcDcl);
+                FunctionDcl lastfunc = funcDcls.get(funcDcl.getName()).get(index);
+                if((lastfunc.getBlock() != null && funcDcl.getBlock() != null) ||
+                        (lastfunc.getBlock() == null && funcDcl.getBlock() == null) )
+                    throw new RuntimeException("the function is duplicate!!!");
+
+            }else{
+                funcDcls.get(funcDcl.getName()).add(funcDcl);
+            }
         } else {
             ArrayList<FunctionDcl> funcDclList = new ArrayList<>();
             funcDclList.add(funcDcl);

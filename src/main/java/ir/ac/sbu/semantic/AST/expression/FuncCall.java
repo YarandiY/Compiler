@@ -3,14 +3,10 @@ package ir.ac.sbu.semantic.AST.expression;
 import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.objectweb.asm.Opcodes.GOTO;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
 public class FuncCall extends Expression {

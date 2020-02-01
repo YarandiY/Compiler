@@ -1,5 +1,5 @@
 function void start()
 begin
-int a = 2;
+int a;
 return;
 end

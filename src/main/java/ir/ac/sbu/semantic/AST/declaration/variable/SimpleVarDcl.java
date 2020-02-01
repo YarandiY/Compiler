@@ -6,16 +6,18 @@ import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.GlobalVarDSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalVarDSCP;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
+import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
+@Data
 public class SimpleVarDcl extends VarDCL {
 
 
-    private boolean constant = false;
+    private boolean constant;
     private Expression exp;
     private String stringType;
 
@@ -31,9 +33,6 @@ public class SimpleVarDcl extends VarDCL {
         stringType = type;
         if (!type.equals("auto")) {
             this.type = SymbolTableHandler.getTypeFromName(type);
-        } else {
-            if (exp == null)
-                throw new RuntimeException("the auto variable must be have expression");
         }
         this.constant = constant;
         this.global = global;
@@ -42,12 +41,13 @@ public class SimpleVarDcl extends VarDCL {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        if (type == null)
-            phonyExpExe();
-
-        // to fill DSCP and add to Symbol table
+        if(type == null)
+            if(exp == null)
+                throw new RuntimeException("the auto variable must be have expression");
+            else
+                phonyExpExe();
+        // to fill DSCP and addReturn to Symbol table
         declare();
-
         if(global){
             Object value = null;
             if(exp != null){

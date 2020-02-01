@@ -28,7 +28,7 @@ public class FuncReturn extends Statement {
             if(r.scope == scope)
                 throw new RuntimeException("more than one return in single scope -__-");
         });
-        functionDcl.add(this);
+        functionDcl.addReturn(this);
         if((expression == null && !functionDcl.getType().equals(Type.VOID_TYPE)) ||
                 (expression != null && (functionDcl.getType().equals(Type.VOID_TYPE) ||
                         !functionDcl.getType().equals(expression.getType()) )))

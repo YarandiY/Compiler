@@ -14,6 +14,12 @@ public class Block implements Node {
     public Block(ArrayList<Operation> operations){
         this.operations = operations;
     }
+
+
+    public void addOperation(Operation operation){
+        operations.add(operation);
+    }
+
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         if(operations == null)
