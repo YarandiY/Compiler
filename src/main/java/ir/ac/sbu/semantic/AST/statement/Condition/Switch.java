@@ -29,6 +29,12 @@ public class Switch extends Statement{
         this.defaultBlock = defaultBlock;
     }
 
+    public void addCase(Case caseSt){
+        if(cases == null)
+            cases = new ArrayList<>();
+        cases.add(caseSt);
+    }
+
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         SymbolTableHandler.getInstance().addScope(Scope.SWITCH);

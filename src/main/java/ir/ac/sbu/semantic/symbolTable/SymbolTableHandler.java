@@ -155,7 +155,7 @@ public class SymbolTableHandler {
     }
 
 
-    //To declare a function addReturn it to funcDcls
+    //To declare a function add it to funcDcls
     public void addFunction(FunctionDcl funcDcl) {
         if (funcDcls.containsKey(funcDcl.getName())) {
             if(funcDcls.get(funcDcl.getName()).contains(funcDcl)){
