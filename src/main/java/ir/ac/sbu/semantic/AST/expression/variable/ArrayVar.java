@@ -1,6 +1,7 @@
 package ir.ac.sbu.semantic.AST.expression.variable;
 
 import ir.ac.sbu.semantic.AST.expression.Expression;
+import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -10,6 +11,8 @@ import java.util.List;
 import static org.objectweb.asm.Opcodes.AALOAD;
 import static org.objectweb.asm.Opcodes.IALOAD;
 
+
+@Data
 public class ArrayVar extends Variable {
 
     private List<Expression> dimensions;

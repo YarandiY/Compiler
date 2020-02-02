@@ -25,7 +25,7 @@ public class IntegerConst extends ConstantExp {
         storeIntValue(mv,value);
     }
 
-    static void storeIntValue(MethodVisitor mv,Integer value){
+    public static void storeIntValue(MethodVisitor mv,Integer value){
         if (value >= -1 && value <= 5) {
             switch (value) {
                 case -1:
