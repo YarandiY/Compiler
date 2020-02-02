@@ -183,6 +183,8 @@ public class SymbolTableHandler {
     }
 
     public FunctionDcl getFunction(String name, ArrayList<Type> inputs) {
+        System.out.println(name);
+        System.out.println(inputs);
         if (funcDcls.containsKey(name)) {
             ArrayList<FunctionDcl> funcDclMapper = funcDcls.get(name);
             for (FunctionDcl f : funcDclMapper) {

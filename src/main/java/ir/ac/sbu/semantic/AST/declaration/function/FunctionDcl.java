@@ -22,8 +22,8 @@ public class FunctionDcl implements Declaration {
 
     private Type type;
     private String name;
-    private ArrayList<VarDCL> parameters;
-    private List<Type> paramTypes;
+    private ArrayList<VarDCL> parameters = new ArrayList<>();
+    private List<Type> paramTypes = new ArrayList<>();
     private String signature;
     private Block block;
 
@@ -54,6 +54,7 @@ public class FunctionDcl implements Declaration {
         signature.append(")");
         signature.append(type.toString());
         this.signature = signature.toString();
+        declare();
     }
 
     public FunctionDcl(String name, String signature, Block block) {
@@ -62,6 +63,7 @@ public class FunctionDcl implements Declaration {
         this.type = Type.getType(signature.substring(signature.indexOf(')') + 1));
         this.name = name;
         this.block = block;
+        declare();
     }
 
     private void declare() {
@@ -71,7 +73,6 @@ public class FunctionDcl implements Declaration {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        declare();
         MethodVisitor methodVisitor = cw.visitMethod(ACC_STATIC + ACC_PUBLIC, name, this.signature,null,null);
         methodVisitor.visitCode();
         //Add current function's symbol table to stackScope
@@ -96,7 +97,7 @@ public class FunctionDcl implements Declaration {
 
     // check if two functions are the same
     public boolean checkIfEqual(String name, List<Type> paramTypes) {
-        if (this.name.equals(name))
+        if (!this.name.equals(name))
             return false;
         if(paramTypes.size() != this.paramTypes.size())
             return false;
@@ -104,6 +105,7 @@ public class FunctionDcl implements Declaration {
             if(!this.paramTypes.get(i).equals(paramTypes.get(i)))
                 return false;
         }
+
         return true;
     }
 }

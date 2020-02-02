@@ -41,11 +41,11 @@ import java.util.Deque;
 
 public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
     private Lexical lexical;
-    private Deque<Object> semanticStack;
+    private SemanticStack semanticStack;
 
     public CodeGenerator(Lexical lexical) {
         this.lexical = lexical;
-        semanticStack = new ArrayDeque<>();
+        semanticStack = new SemanticStack();
         semanticStack.push(GlobalBlock.getInstance());
     }
 
@@ -373,12 +373,21 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             /* ---------------------- functions ---------------------------- */
             case "voidReturn": {
-                semanticStack.push(new FuncReturn(null));
+                Block block = (Block) semanticStack.pop();
+                FunctionDcl functionDcl = (FunctionDcl) semanticStack.pop();
+                FuncReturn funcReturn = new FuncReturn(null,functionDcl);
+                block.addOperation(funcReturn);
+                semanticStack.push(functionDcl);
+                semanticStack.push(block);
                 break;
             }
             case "return": {
                 Expression exp = (Expression) semanticStack.pop();
-                semanticStack.push(new FuncReturn(exp));
+                Block block = (Block) semanticStack.pop();
+                FunctionDcl functionDcl = (FunctionDcl) semanticStack.pop();
+                block.addOperation(new FuncReturn(exp,functionDcl));
+                semanticStack.push(functionDcl);
+                semanticStack.push(block);
                 break;
             }
             case "break": {

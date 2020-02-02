@@ -16,24 +16,24 @@ public class FuncReturn extends Statement {
     private Expression expression;
     private SymbolTable scope;
 
-    public FuncReturn(Expression expression) {
+    public FuncReturn(Expression expression,FunctionDcl funcDcl) {
         this.expression = expression;
-    }
-
-    @Override
-    public void codegen(MethodVisitor mv, ClassWriter cw) {
         scope = SymbolTableHandler.getInstance().getLastScope();
-        FunctionDcl functionDcl = SymbolTableHandler.getInstance().getLastFunction();
-        functionDcl.getReturns().forEach((r) -> {
+        funcDcl.getReturns().forEach((r) -> {
             if(r.scope == scope) {
                 throw new RuntimeException("more than one return in single scope -__-");
             }
         });
-        functionDcl.addReturn(this);
-        if((expression == null && !functionDcl.getType().equals(Type.VOID_TYPE)) ||
-                (expression != null && (functionDcl.getType().equals(Type.VOID_TYPE) ||
-                        !functionDcl.getType().equals(expression.getType()) )))
+        funcDcl.addReturn(this);
+        if((expression == null && !funcDcl.getType().equals(Type.VOID_TYPE)) ||
+                (expression != null && (funcDcl.getType().equals(Type.VOID_TYPE) ||
+                        !funcDcl.getType().equals(expression.getType()) )))
             throw new RuntimeException("Return type mismatch");
+    }
+
+    @Override
+    public void codegen(MethodVisitor mv, ClassWriter cw) {
+        FunctionDcl functionDcl = SymbolTableHandler.getInstance().getLastFunction();
         if(expression == null)
             mv.visitInsn(RETURN);
         else {
