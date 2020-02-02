@@ -25,9 +25,6 @@ public class For extends Loop {
     private Label stepLabel = new Label();
     private Label blockLabel = new Label();
 
-    public For(Block block) {
-        super(block);
-    }
 
     public For(Block block, InitExp init, Expression expression, StepExp step) {
         super(block);

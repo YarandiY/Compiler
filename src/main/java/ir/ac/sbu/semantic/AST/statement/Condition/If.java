@@ -7,6 +7,7 @@ import ir.ac.sbu.semantic.AST.expression.constant.IntegerConst;
 import ir.ac.sbu.semantic.AST.statement.Statement;
 import ir.ac.sbu.semantic.symbolTable.Scope;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
+import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -14,6 +15,7 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.GOTO;
 import static org.objectweb.asm.Opcodes.IFEQ;
 
+@Data
 public class If extends Statement {
 
     private Expression expression;

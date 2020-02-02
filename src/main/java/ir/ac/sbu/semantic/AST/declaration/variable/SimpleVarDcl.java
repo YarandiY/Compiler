@@ -31,9 +31,10 @@ public class SimpleVarDcl extends VarDCL {
     public SimpleVarDcl(String varName, String type, boolean constant, boolean global, Expression exp) {
         name = varName;
         stringType = type;
-        if (!type.equals("auto")) {
+        if (!type.equals("auto"))
             this.type = SymbolTableHandler.getTypeFromName(type);
-        }
+        else
+            this.type = null;
         this.constant = constant;
         this.global = global;
         this.exp = exp;
@@ -46,7 +47,7 @@ public class SimpleVarDcl extends VarDCL {
                 throw new RuntimeException("the auto variable must be have expression");
             else
                 phonyExpExe();
-        // to fill DSCP and addReturn to Symbol table
+        // to fill DSCP and add to Symbol table
         declare();
         if(global){
             Object value = null;

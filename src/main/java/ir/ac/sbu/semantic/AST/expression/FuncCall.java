@@ -21,6 +21,12 @@ public class FuncCall extends Expression {
         this.parameters = parameters;
     }
 
+    public void addParam(Expression exp){
+        if(parameters == null)
+            parameters = new ArrayList<>();
+        parameters.add(exp);
+    }
+
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {

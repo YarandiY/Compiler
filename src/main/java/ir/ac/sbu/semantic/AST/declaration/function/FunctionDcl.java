@@ -74,7 +74,7 @@ public class FunctionDcl implements Declaration {
         declare();
         MethodVisitor methodVisitor = cw.visitMethod(ACC_STATIC + ACC_PUBLIC, name, this.signature,null,null);
         methodVisitor.visitCode();
-        // addReturn current function's symbol table to stackScope
+        //Add current function's symbol table to stackScope
         SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
         SymbolTableHandler.getInstance().setLastFunction(this);
         parameters.forEach((param)->param.codegen(methodVisitor, cw));
