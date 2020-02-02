@@ -149,8 +149,8 @@ MultilpleCommentCharacter = [^\t\r\n#]
     "new"         { return symbol("new");}
     "println"     { return symbol("println");}
     "input"       { return symbol("input");}
-    "true"        { return symbol("true");}
-    "false"       { return symbol("false");}
+    "true"        { return symbol("true", Boolean.valueOf(yytext()));}
+    "false"       { return symbol("false", Boolean.valueOf(yytext()));}
     /* VARIABLES */
     {id}                {   String temp = yytext();
                             if(records.contains(temp)){

@@ -21,11 +21,19 @@ public class SimpleVarDcl extends VarDCL {
     private Expression exp;
     private String stringType;
 
+    public void setExp(Expression exp){
+        this.exp = exp;
+        SymbolTableHandler.getInstance().getDescriptor(name).setValid(true);
+    }
+
+
     public SimpleVarDcl(String varName, Type type, boolean constant, boolean global) {
         name = varName;
         this.type = type;
         this.constant = constant;
         this.global = global;
+        // to fill DSCP and add to Symbol table
+        declare();
     }
 
     public SimpleVarDcl(String varName, String type, boolean constant, boolean global, Expression exp) {
@@ -38,17 +46,17 @@ public class SimpleVarDcl extends VarDCL {
         this.constant = constant;
         this.global = global;
         this.exp = exp;
-    }
-
-    @Override
-    public void codegen(MethodVisitor mv, ClassWriter cw) {
-        if(type == null)
+        if(this.type == null)
             if(exp == null)
                 throw new RuntimeException("the auto variable must be have expression");
             else
                 phonyExpExe();
         // to fill DSCP and add to Symbol table
         declare();
+    }
+
+    @Override
+    public void codegen(MethodVisitor mv, ClassWriter cw) {
         if(global){
             Object value = null;
             if(exp != null){

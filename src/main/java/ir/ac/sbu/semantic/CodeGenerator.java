@@ -151,7 +151,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             /* --------------------- binary expressions --------------------- */
-            /* ---------------------- Arithmetic ---------------------------- */
+            /* ---------------------- Arithmetic ------------------------ */
             case "div": {
                 Expression second = (Expression) semanticStack.pop();
                 Expression first = (Expression) semanticStack.pop();
@@ -303,7 +303,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(new PrePP(var));
                 break;
             }
-            /* --------------------------Const  ---------------------------- */
+            /* -------------------------- Const ---------------------------- */
             case "pushReal": {
                 Object realNum = lexical.currentToken().getValue();
                 if (realNum instanceof Float)
@@ -326,7 +326,12 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             case "pushBool": {
-                semanticStack.push(new BooleanConst((Boolean) lexical.currentToken().getValue()));
+                Object value =  lexical.currentToken().getValue();
+                if(value instanceof Boolean)
+                    System.out.println("inja");
+                else
+                    System.out.println("onja");
+                semanticStack.push(new BooleanConst((Boolean)value));
                 break;
             }
             case "pushChar": {
@@ -339,7 +344,8 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             /* -------------------------- variable ---------------------------- */
             case "pushVar": {
-                semanticStack.push(new SimpleVar((String) lexical.currentToken().getValue()));
+                String name = (String) lexical.currentToken().getValue();
+                semanticStack.push(new SimpleVar(name));
                 break;
             }
             /* -------------------------- Assignment -------------------------- */

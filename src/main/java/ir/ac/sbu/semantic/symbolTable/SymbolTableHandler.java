@@ -80,33 +80,40 @@ public class SymbolTableHandler {
         switch (varType) {
             case "int":
             case "Integer":
+            case "I":
                 type = Type.INT_TYPE;
                 break;
             case "long":
             case "Long":
+            case "J":
                 type = Type.LONG_TYPE;
                 break;
             case "char":
             case "Character":
+            case "C":
                 type = Type.CHAR_TYPE;
                 break;
             case "bool":
             case "Boolean":
+            case "Z":
                 type = Type.BOOLEAN_TYPE;
                 break;
             case "double":
             case "Double":
+            case "D":
                 type = Type.DOUBLE_TYPE;
                 break;
             case "float":
             case "Float":
+            case "F":
                 type = Type.FLOAT_TYPE;
                 break;
-            case "string":
-            case "String":
-                type = Type.getType(String.class);
-                break;
+//            case "string":
+//            case "String":
+//                type = Type.getType(String.class);
+//                break;
             case "void":
+            case "V":
                 type = Type.VOID_TYPE;
                 break;
             default:
@@ -204,6 +211,7 @@ public class SymbolTableHandler {
     public DSCP getDescriptor(String name) {
         int symbolTbl = stackScopes.size() - 1;
         while (symbolTbl >= 0) {
+
             if (stackScopes.get(symbolTbl).containsKey(name))
                 return stackScopes.get(symbolTbl).get(name);
             symbolTbl--;
