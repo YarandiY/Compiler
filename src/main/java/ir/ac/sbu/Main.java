@@ -21,7 +21,8 @@ public class Main {
     }
 
     private static void parseInput(Scanner lexicalAnalyzer, CodeGenerator codeGenerator) {
-        Parser parser = new Parser(lexicalAnalyzer, codeGenerator, "src/main/java/ir/ac/sbu/syntax/table.npt");
+        Parser parser = new Parser(lexicalAnalyzer,
+                codeGenerator, "src/main/java/ir/ac/sbu/syntax/table.npt");
         Node result;
         try {
             // Parse given file
@@ -29,6 +30,7 @@ public class Main {
             // Get Root of AST
             result = codeGenerator.getResult();
         } catch (Exception e) {
+            System.out.println("test");
             System.out.println(e.getMessage());
             return;
         }

@@ -1,11 +1,13 @@
-package ir.ac.sbu.semantic.AST.expression.constant;
+package ir.ac.sbu.semantic.AST.expression;
 
+import ir.ac.sbu.semantic.AST.Operation;
+import ir.ac.sbu.semantic.AST.expression.constant.IntegerConst;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-public class Sizeof extends ConstantExp {
+public class Sizeof extends Expression implements Operation {
 
     private Integer value;
 
@@ -14,7 +16,6 @@ public class Sizeof extends ConstantExp {
         type = Type.INT_TYPE;
     }
 
-    @Override
     public Object getValue() {
         return value;
     }

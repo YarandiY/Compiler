@@ -3,6 +3,7 @@ package ir.ac.sbu.semantic.AST.declaration.variable;
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.*;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
+import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -12,7 +13,7 @@ import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
-
+@Data
 public class ArrDcl extends VarDCL {
 
     private List<Expression> dimensions;

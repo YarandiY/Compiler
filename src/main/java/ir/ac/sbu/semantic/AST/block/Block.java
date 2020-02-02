@@ -2,6 +2,7 @@ package ir.ac.sbu.semantic.AST.block;
 
 import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.Operation;
+import ir.ac.sbu.semantic.AST.expression.FuncCall;
 import ir.ac.sbu.semantic.AST.statement.FuncReturn;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
