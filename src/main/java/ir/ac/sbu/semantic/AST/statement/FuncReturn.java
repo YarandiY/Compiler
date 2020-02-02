@@ -25,8 +25,9 @@ public class FuncReturn extends Statement {
         scope = SymbolTableHandler.getInstance().getLastScope();
         FunctionDcl functionDcl = SymbolTableHandler.getInstance().getLastFunction();
         functionDcl.getReturns().forEach((r) -> {
-            if(r.scope == scope)
+            if(r.scope == scope) {
                 throw new RuntimeException("more than one return in single scope -__-");
+            }
         });
         functionDcl.addReturn(this);
         if((expression == null && !functionDcl.getType().equals(Type.VOID_TYPE)) ||

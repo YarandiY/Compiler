@@ -109,7 +109,7 @@ MultilpleCommentCharacter = [^\t\r\n#]
     "--"    { return symbol("--");}
     "-"     { return symbol("-");}
     /* CHARACTER */
-    "'"     { yybegin(CHARACTER); return symbol("char", yytext());}
+    "'"     { yybegin(CHARACTER);string.setLength(0); string.append("'");}
     /* STRINGS */
     \"      { yybegin(STRING); string.setLength(0); string.append("\"");}
      /* SINGLE LINE COMMENTS */
@@ -172,9 +172,9 @@ MultilpleCommentCharacter = [^\t\r\n#]
 }
 
 <CHARACTER>{
-    "'"                 {yybegin(YYINITIAL); string.append("'"); return symbol("char", string);}
-    {StringCharacter}   {string.append(yytext());}
-    {SpecialCharacter}  {string.append(yytext());}
+    "'"                 {yybegin(YYINITIAL);}
+    {StringCharacter}   {return symbol("char", yytext().charAt(0));}
+    {SpecialCharacter}  {return symbol("char" ,yytext().charAt(0));}
 }
 
 <STRING>{

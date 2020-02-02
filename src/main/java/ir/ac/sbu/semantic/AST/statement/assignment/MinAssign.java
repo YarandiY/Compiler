@@ -19,6 +19,7 @@ public class MinAssign extends Assignment{
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
+        checkConst();
         DSCP dscp = variable.getDSCP();
         variable.codegen(mv, cw);
         expression.codegen(mv, cw);

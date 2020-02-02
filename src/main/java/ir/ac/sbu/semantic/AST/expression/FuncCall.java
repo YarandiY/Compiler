@@ -1,5 +1,6 @@
 package ir.ac.sbu.semantic.AST.expression;
 
+import ir.ac.sbu.semantic.AST.Operation;
 import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import org.objectweb.asm.ClassWriter;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
-public class FuncCall extends Expression {
+public class FuncCall extends Expression implements Operation {
 
     private String id;
     private List<Expression> parameters;
