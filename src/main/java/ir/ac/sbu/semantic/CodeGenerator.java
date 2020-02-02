@@ -327,10 +327,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "pushBool": {
                 Object value =  lexical.currentToken().getValue();
-                if(value instanceof Boolean)
-                    System.out.println("inja");
-                else
-                    System.out.println("onja");
                 semanticStack.push(new BooleanConst((Boolean)value));
                 break;
             }
