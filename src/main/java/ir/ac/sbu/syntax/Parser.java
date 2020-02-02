@@ -1,5 +1,3 @@
-package ir.ac.sbu.syntax;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,7 +13,7 @@ class LLCell {
     private int target;
     private List<String> functions;
 
-    LLCell(Action action, int target, List<String> functions) {
+    public LLCell(Action action, int target, List<String> functions) {
         this.action = action;
         this.target = target;
         this.functions = functions;
