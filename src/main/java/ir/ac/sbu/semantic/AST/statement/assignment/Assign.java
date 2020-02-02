@@ -19,12 +19,12 @@ public class Assign extends Assignment {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
+        checkConst();
         DSCP dscp = variable.getDSCP();
         expression.codegen(mv, cw);
 
         if (variable.getType() != expression.getType())
             throw new RuntimeException("you should cast expression!");
-
         if(dscp instanceof LocalDSCP) {
             int index = ((LocalDSCP) dscp).getIndex();
             mv.visitVarInsn(variable.getType().getOpcode(ISTORE), index);

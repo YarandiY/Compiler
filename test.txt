@@ -1,6 +1,12 @@
 function void start()
 begin
-auto a = true;
-a = 2;
+const int a = 2;
+a = 4;
+a();
+return;
+end
+
+function int a()
+begin
 return;
 end

@@ -2,6 +2,7 @@ package ir.ac.sbu.semantic.AST.block;
 
 import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.declaration.Declaration;
+import ir.ac.sbu.semantic.AST.expression.FuncCall;
 import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -31,6 +32,6 @@ public class GlobalBlock implements Node {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         declarationList.forEach(declaration -> declaration.codegen(mv, cw));
-        //TODO calling start function
+        new FuncCall("start",null).codegen(mv, cw);
     }
 }

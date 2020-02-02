@@ -64,12 +64,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.pop();
                 break;
             }
-            case "checkConst": {
-                Variable variable = (Variable) semanticStack.pop();
-                checkConst(variable);
-                semanticStack.push(variable);
-                break;
-            }
             /* --------------------- declarations --------------------- */
             case "mkFuncDCL": {
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
@@ -273,7 +267,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "postmm": {
                 Variable var = (Variable) semanticStack.pop();
-                checkConst(var);
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
                 semanticStack.push(new PostMM(var));
@@ -281,7 +274,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "postpp": {
                 Variable var = (Variable) semanticStack.pop();
-                checkConst(var);
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
                 semanticStack.push(new PostPP(var));
@@ -289,7 +281,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "premm": {
                 Variable var = (Variable) semanticStack.pop();
-                checkConst(var);
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
                 semanticStack.push(new PreMM(var));
@@ -297,7 +288,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "prepp": {
                 Variable var = (Variable) semanticStack.pop();
-                checkConst(var);
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
                 semanticStack.push(new PrePP(var));
@@ -327,10 +317,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "pushBool": {
                 Object value =  lexical.currentToken().getValue();
-                if(value instanceof Boolean)
-                    System.out.println("inja");
-                else
-                    System.out.println("onja");
                 semanticStack.push(new BooleanConst((Boolean)value));
                 break;
             }
@@ -564,21 +550,14 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             case "minDimNum":
                 break;
+            case "checkConst":
+                break;
             default:
                 throw new RuntimeException("Illegal semantic function: " + sem);
 
         }
     }
 
-    private void checkConst(Variable variable) {
-        boolean isConst = false;
-        if (variable instanceof SimpleVar) {
-            DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(variable.getName());
-            isConst = (dscp instanceof GlobalVarDSCP) ? ((GlobalVarDSCP) dscp).isConstant() : ((LocalVarDSCP) dscp).isConstant();
-        }
-        if (isConst)
-            throw new RuntimeException("Const variables can't assign");
-    }
 
     private void addFuncToGlobalBlock(FunctionDcl function) {
         if (GlobalBlock.getInstance().getDeclarationList().contains(function)) {
