@@ -5,6 +5,7 @@ import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.statement.Statement;
 import ir.ac.sbu.semantic.symbolTable.Scope;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
+import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 
 import static org.objectweb.asm.Opcodes.GOTO;
 
+@Data
 public class Switch extends Statement{
     private Expression expression;
     private ArrayList <Case> cases;
@@ -30,6 +32,7 @@ public class Switch extends Statement{
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         SymbolTableHandler.getInstance().addScope(Scope.SWITCH);
+        SymbolTableHandler.getInstance().setLastSwitch(this);
         Label [] labels = new Label[cases.size()];
         int [] keys = new int[cases.size()];
         int i = 0 ;
@@ -52,5 +55,6 @@ public class Switch extends Statement{
         mv.visitLookupSwitchInsn(defaultLabel, keys, labels);
         mv.visitLabel(end);
         SymbolTableHandler.getInstance().popScope();
+        SymbolTableHandler.getInstance().setLastSwitch(null);
     }
 }

@@ -24,7 +24,6 @@ public class For extends Loop {
     private Label expLabel = new Label();
     private Label stepLabel = new Label();
     private Label blockLabel = new Label();
-    private Label end = new Label();
 
     public For(Block block) {
         super(block);
@@ -40,6 +39,7 @@ public class For extends Loop {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         SymbolTableHandler.getInstance().addScope(Scope.LOOP);
+        SymbolTableHandler.getInstance().setInnerLoop(this);
         // ST init
         if (init != null) {
             init.codegen(mv, cw);
@@ -59,6 +59,7 @@ public class For extends Loop {
 
         // ST step
         mv.visitLabel(stepLabel);
+        mv.visitLabel(startLoop);
         if (step != null) {
             step.codegen(mv, cw);
             if (step instanceof PostPP || step instanceof PrePP
@@ -76,5 +77,6 @@ public class For extends Loop {
         mv.visitLabel(end);
 
         SymbolTableHandler.getInstance().popScope();
+        SymbolTableHandler.getInstance().setInnerLoop(null);
     }
 }

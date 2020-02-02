@@ -16,6 +16,7 @@ import ir.ac.sbu.semantic.AST.expression.unary.*;
 import ir.ac.sbu.semantic.AST.expression.variable.RecordVar;
 import ir.ac.sbu.semantic.AST.expression.variable.SimpleVar;
 import ir.ac.sbu.semantic.AST.expression.variable.Variable;
+import ir.ac.sbu.semantic.AST.statement.FuncReturn;
 import ir.ac.sbu.semantic.AST.statement.assignment.*;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.GlobalVarDSCP;
@@ -74,17 +75,10 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             case "completeFuncDCL": {
-                Object node = semanticStack.pop();
-                if (node instanceof Block) {
-                    Block block = (Block) node;
-                    FunctionDcl function = (FunctionDcl) semanticStack.pop();
-                    function.setBlock(block);
-                    semanticStack.push(function);
-                } else if (node instanceof FunctionDcl) {
-                    FunctionDcl function = (FunctionDcl) node;
-                    GlobalBlock.getInstance().addDeclaration(function);
-                } else
-                    throw new RuntimeException("something wrong in completeFuncDCL");
+                Block block = (Block) semanticStack.pop();
+                FunctionDcl function = (FunctionDcl) semanticStack.pop();
+                function.setBlock(block);
+                semanticStack.push(function);
                 break;
             }
             case "mkSimpleVarDCL": {
@@ -116,6 +110,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 Block block = (Block) semanticStack.pop();
                 block.addOperation(operation);
                 semanticStack.push(block);
+                break;
             }
             case "addGlobalBlock": {
                 Declaration declaration = (Declaration) semanticStack.pop();
@@ -123,6 +118,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     addFuncToGlobalBlock((FunctionDcl) declaration);
                 else
                     GlobalBlock.getInstance().addDeclaration(declaration);
+                break;
             }
             /* --------------------- binary expressions --------------------- */
             /* ---------------------- Arithmetic ---------------------------- */
@@ -297,6 +293,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "sizeof": {
                 String baseType = (String) semanticStack.pop();
                 semanticStack.push(new Sizeof(baseType));
+                break;
             }
             case "pushBool": {
                 semanticStack.push(new BooleanConst((Boolean) lexical.currentToken().getValue()));
@@ -315,7 +312,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(new SimpleVar((String) lexical.currentToken().getValue()));
                 break;
             }
-            /* ---------------------- Assignment ---------------------------- */
+            /* -------------------------- Assignment -------------------------- */
             case "assign": {
                 Expression exp = (Expression) semanticStack.pop();
                 Variable var = (Variable) semanticStack.pop();
@@ -393,10 +390,15 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             case "addDCLsList":
                 break;
-            case "voidReturn":
+            case "voidReturn":{
+                semanticStack.push(new FuncReturn(null));
                 break;
-            case "return":
+            }
+            case "return":{
+                Expression exp = (Expression) semanticStack.pop();
+                semanticStack.push(new FuncReturn(exp));
                 break;
+            }
             case "check2Type":
                 break;
             case "ifZDimNum":
@@ -426,7 +428,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "minDimNum":
                 break;
             default:
-                System.out.println("Illegal semantic function: " + sem);
+                throw new RuntimeException("Illegal semantic function: " + sem);
 
         }
     }

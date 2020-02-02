@@ -2,6 +2,8 @@ package ir.ac.sbu.semantic.symbolTable;
 
 import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.AST.declaration.record.RecordDcl;
+import ir.ac.sbu.semantic.AST.statement.Condition.Switch;
+import ir.ac.sbu.semantic.AST.statement.loop.Loop;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import lombok.Data;
 import org.objectweb.asm.Opcodes;
@@ -15,6 +17,8 @@ import java.util.Set;
 public class SymbolTableHandler {
 
     private static SymbolTableHandler instance = new SymbolTableHandler();
+
+
     private SymbolTableHandler() {
         SymbolTable globalSymTbl = new SymbolTable();
         globalSymTbl.setIndex(1);
@@ -25,7 +29,8 @@ public class SymbolTableHandler {
     }
 
     private FunctionDcl LastFunction;
-    private boolean inLoop = false;
+    private Loop innerLoop;
+    private Switch lastSwitch;
 
     private ArrayList<SymbolTable> stackScopes = new ArrayList<>();
     private HashMap<String, ArrayList<FunctionDcl>> funcDcls = new HashMap<>();
@@ -69,6 +74,7 @@ public class SymbolTableHandler {
         }
         return size;
     }
+
     public static Type getTypeFromName(String varType) {
         Type type;
         switch (varType) {
@@ -128,9 +134,11 @@ public class SymbolTableHandler {
     public Set<String> getFuncNames() {
         return funcDcls.keySet();
     }
+
     public void popScope() {
         stackScopes.remove(stackScopes.size() - 1);
     }
+
     public void addScope(Scope typeOfScope) {
         SymbolTable symbolTable = new SymbolTable();
         symbolTable.setTypeOfScope(typeOfScope);
@@ -138,6 +146,7 @@ public class SymbolTableHandler {
             symbolTable.setIndex(getLastScope().getIndex());
         stackScopes.add(symbolTable);
     }
+
     public SymbolTable getLastScope() {
         if (stackScopes.size() == 0)
             throw new RuntimeException("Something Goes Wrong");
@@ -202,11 +211,8 @@ public class SymbolTableHandler {
         throw new RuntimeException("the name doesn't exist");
     }
 
-    //TODO check it!
     public boolean canHaveBreak() {
-        if(getLastScope().getTypeOfScope() == Scope.SWITCH)
-            return true;
-        return inLoop;
+        return (lastSwitch != null || innerLoop != null);
     }
 
     public void addRecord(RecordDcl record) {
@@ -216,7 +222,7 @@ public class SymbolTableHandler {
     }
 
 
-    public RecordDcl getRecord(String name) {
+    private RecordDcl getRecord(String name) {
         if (recordDcls.containsKey(name))
             throw new RuntimeException("Record not Found");
 

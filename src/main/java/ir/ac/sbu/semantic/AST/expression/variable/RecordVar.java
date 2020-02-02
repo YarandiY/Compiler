@@ -6,6 +6,5 @@ import org.objectweb.asm.MethodVisitor;
 public class RecordVar extends Variable {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-
     }
 }

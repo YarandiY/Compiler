@@ -1,6 +1,5 @@
 package ir.ac.sbu.semantic.AST.declaration.function;
 
-import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.block.Block;
 import ir.ac.sbu.semantic.AST.declaration.Declaration;
 import ir.ac.sbu.semantic.AST.declaration.variable.VarDCL;
@@ -87,6 +86,7 @@ public class FunctionDcl implements Declaration {
         methodVisitor.visitMaxs(1, 1);
         methodVisitor.visitEnd();
         SymbolTableHandler.getInstance().popScope();
+        SymbolTableHandler.getInstance().setLastFunction(null);
     }
 
     @Override

@@ -15,7 +15,7 @@ class LLCell {
     private int target;
     private List<String> functions;
 
-    public LLCell(Action action, int target, List<String> functions) {
+    LLCell(Action action, int target, List<String> functions) {
         this.action = action;
         this.target = target;
         this.functions = functions;
