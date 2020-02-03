@@ -10,7 +10,11 @@ int afffdf = afff;
 
 function void start()
 begin
+int[] t = new int[7];
+int hg = len(t[5]);
 int i = 4;
+int gh = sizeof(int);
+println(gh);
 double j = input(double);
 println(i);
 switch(i) of begin
