@@ -2,8 +2,12 @@ package ir.ac.sbu.semantic.AST.declaration.variable;
 
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.constant.ConstantExp;
+import ir.ac.sbu.semantic.AST.expression.variable.SimpleVar;
+import ir.ac.sbu.semantic.AST.expression.variable.Variable;
+import ir.ac.sbu.semantic.AST.statement.assignment.Assign;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.GlobalVarDSCP;
+import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalDSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalVarDSCP;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import lombok.Data;
@@ -21,7 +25,7 @@ public class SimpleVarDcl extends VarDCL {
     private Expression exp;
     private String stringType;
 
-    public void setExp(Expression exp){
+    public void setExp(Expression exp) {
         this.exp = exp;
         SymbolTableHandler.getInstance().getDescriptor(name).setValid(true);
     }
@@ -46,8 +50,8 @@ public class SimpleVarDcl extends VarDCL {
         this.constant = constant;
         this.global = global;
         this.exp = exp;
-        if(this.type == null)
-            if(exp == null)
+        if (this.type == null)
+            if (exp == null)
                 throw new RuntimeException("the auto variable must be have expression");
             else
                 phonyExpExe();
@@ -57,21 +61,21 @@ public class SimpleVarDcl extends VarDCL {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        if(global){
-            Object value = null;
-            if(exp != null){
-                executeGlobalExp(cw);
-                value = ((ConstantExp) exp).getValue();
-            }
-            cw.visitField(ACC_STATIC, name, type.getDescriptor(),
+        if (global) {
+            Expression value = null;
+            int access = ACC_STATIC;
+            access += constant ? ACC_FINAL : 0;
+            cw.visitField(access, name, type.getDescriptor(),
                     null, value).visitEnd();
-        }
-        else if (exp != null) {
+            if (exp != null) {
+                executeGlobalExp(cw);
+            }
+        } else if (exp != null) {
             exp.codegen(mv, cw);
-            if (exp.getType() != type)
+            if (!exp.getType().equals(type))
                 throw new RuntimeException("the type of variable and expression doesn't match");
             LocalVarDSCP dscp = (LocalVarDSCP) SymbolTableHandler.getInstance().getDescriptor(name);
-            mv.visitVarInsn(getType().getOpcode(ISTORE), dscp.getIndex());
+            mv.visitVarInsn(type.getOpcode(ISTORE), dscp.getIndex());
         }
     }
 
@@ -79,15 +83,17 @@ public class SimpleVarDcl extends VarDCL {
     private void phonyExpExe() {
         TempMethodVisitor tempMV = new TempMethodVisitor();
         TempClassWriter tempCW = new TempClassWriter();
-        exp.codegen(tempMV,tempCW);
+        exp.codegen(tempMV, tempCW);
         type = exp.getType();
     }
 
-    private void executeGlobalExp(ClassWriter cw){
-        MethodVisitor mv = cw.visitMethod(ACC_STATIC, "<clinit>",
+    private void executeGlobalExp(ClassWriter cw) {
+        int access = ACC_STATIC;
+        access += constant ? ACC_FINAL : 0;
+        MethodVisitor mv = cw.visitMethod(access, "<clinit>",
                 "()V", null, null);
         mv.visitCode();
-        exp.codegen(mv, cw);
+        assign(new SimpleVar(name, type), exp, mv, cw);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
@@ -102,7 +108,23 @@ public class SimpleVarDcl extends VarDCL {
 
         SymbolTableHandler.getInstance().addVariable(name, dscp);
     }
+
+    private void assign(Variable variable, Expression expression,
+                        MethodVisitor mv, ClassWriter cw) {
+        DSCP dscp = variable.getDSCP();
+        expression.codegen(mv, cw);
+
+        if (variable.getType() != expression.getType())
+            throw new RuntimeException("you should cast expression!");
+        if (dscp instanceof LocalDSCP) {
+            int index = ((LocalDSCP) dscp).getIndex();
+            mv.visitVarInsn(variable.getType().getOpcode(ISTORE), index);
+        } else
+            mv.visitFieldInsn(PUTSTATIC, "$Main", variable.getName(), dscp.getType().toString());
+        dscp.setValid(true);
+    }
 }
+
 
 class TempMethodVisitor extends MethodVisitor {
     public TempMethodVisitor() {
@@ -110,6 +132,8 @@ class TempMethodVisitor extends MethodVisitor {
     }
 }
 
-class TempClassWriter extends ClassWriter{
-    public TempClassWriter() { super(327680); }
+class TempClassWriter extends ClassWriter {
+    public TempClassWriter() {
+        super(327680);
+    }
 }

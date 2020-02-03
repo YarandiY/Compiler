@@ -20,6 +20,7 @@ public class Negative extends UnaryExp { //-
         operand.codegen(mv, cw);
         if(type != Type.BOOLEAN_TYPE)
             throw new RuntimeException("It's not number!");
+        type = operand.getType();
         mv.visitInsn(type.getOpcode(INEG));
     }
 }

@@ -3,6 +3,8 @@ package ir.ac.sbu.semantic.AST.block;
 import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.AST.declaration.Declaration;
 import ir.ac.sbu.semantic.AST.expression.FuncCall;
+import ir.ac.sbu.semantic.AST.expression.binary.arithmetic.Sum;
+import ir.ac.sbu.semantic.AST.expression.constant.IntegerConst;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import lombok.Data;
 import org.objectweb.asm.ClassWriter;

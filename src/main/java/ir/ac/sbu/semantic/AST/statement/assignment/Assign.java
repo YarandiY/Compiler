@@ -31,5 +31,6 @@ public class Assign extends Assignment {
         }
         else
             mv.visitFieldInsn(PUTSTATIC, "$Main", variable.getName(), dscp.getType().toString());
+        dscp.setValid(true);
     }
 }

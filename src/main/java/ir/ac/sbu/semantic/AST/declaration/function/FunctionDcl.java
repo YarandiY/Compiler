@@ -47,14 +47,7 @@ public class FunctionDcl implements Declaration {
         this.parameters = parameters;
 
         // to fill paramTypes and make signature
-        StringBuilder signature = new StringBuilder("(");
-        for (VarDCL parameter : parameters) {
-            signature.append(parameter.getType().toString());
-            paramTypes.add(parameter.getType());
-        }
-        signature.append(")");
-        signature.append(type.toString());
-        this.signature = signature.toString();
+        setSig();
     }
 
     public FunctionDcl(String name, String signature, Block block) {
@@ -73,7 +66,9 @@ public class FunctionDcl implements Declaration {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        MethodVisitor methodVisitor = cw.visitMethod(ACC_STATIC + ACC_PUBLIC, name, this.signature,null,null);
+        setSig();
+        MethodVisitor methodVisitor = cw.visitMethod(ACC_STATIC + ACC_PUBLIC,
+                name, this.signature,null,null);
         methodVisitor.visitCode();
         //Add current function's symbol table to stackScope
         SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
@@ -82,9 +77,7 @@ public class FunctionDcl implements Declaration {
         block.codegen(methodVisitor, cw);
         if (returns.size() == 0)
             throw new RuntimeException("You must use at least one return statement in function!");
-
-        // TODO: why 1, 1??
-        methodVisitor.visitMaxs(1, 1);
+        methodVisitor.visitMaxs(0, 0);
         methodVisitor.visitEnd();
         SymbolTableHandler.getInstance().popScope();
         SymbolTableHandler.getInstance().setLastFunction(null);
@@ -107,5 +100,17 @@ public class FunctionDcl implements Declaration {
         }
 
         return true;
+    }
+
+    private  void setSig(){
+        // to fill paramTypes and make signature
+        StringBuilder signature = new StringBuilder("(");
+        for (VarDCL parameter : parameters) {
+            signature.append(parameter.getType().toString());
+            paramTypes.add(parameter.getType());
+        }
+        signature.append(")");
+        signature.append(type.toString());
+        this.signature = signature.toString();
     }
 }

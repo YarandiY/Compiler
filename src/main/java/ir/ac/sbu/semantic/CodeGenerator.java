@@ -31,11 +31,12 @@ import ir.ac.sbu.semantic.AST.statement.loop.For;
 import ir.ac.sbu.semantic.AST.statement.loop.InitExp;
 import ir.ac.sbu.semantic.AST.statement.loop.Repeat;
 import ir.ac.sbu.semantic.AST.statement.loop.StepExp;
-import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
-import ir.ac.sbu.semantic.symbolTable.DSCPs.GlobalVarDSCP;
-import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalVarDSCP;
+import ir.ac.sbu.semantic.symbolTable.DSCPs.*;
+import ir.ac.sbu.semantic.symbolTable.SymbolTable;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import ir.ac.sbu.syntax.Lexical;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(function);
                 break;
             }
-            case "addFuncDCL":{
+            case "addFuncDCL": {
                 FunctionDcl function = (FunctionDcl) semanticStack.pop();
                 function.declare();
                 semanticStack.push(function);
@@ -117,6 +118,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     ((GlobalVarDSCP) dscp).setConstant(true);
                 if (dscp instanceof LocalVarDSCP)
                     ((LocalVarDSCP) dscp).setConstant(true);
+                var.setConstant(true);
                 semanticStack.push(var);
                 break;
             }
@@ -157,29 +159,36 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(varDcl);
                 break;
             }
-            case "dimpp":{
+            case "dimpp": {
                 Byte flag = (Byte) semanticStack.pop();
                 flag++;
                 semanticStack.push(flag);
                 break;
             }
-            case "mkArrayVarDCL":{
+            case "mkArrayVarDCL": {
                 String name = (String) lexical.currentToken().getValue();
                 Byte flag = (Byte) semanticStack.pop();
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 if (semanticStack.peek() instanceof GlobalBlock)
-                    semanticStack.push(new ArrDcl(name,type,true,flag));
+                    semanticStack.push(new ArrDcl(name, type, true, flag));
                 else
-                    semanticStack.push(new ArrDcl(name,type,false,flag));
+                    semanticStack.push(new ArrDcl(name, type, false, flag));
                 break;
             }
-            case "check2typesDCL":{
+            case "addArrDCL": {
+                ArrDcl arrDcl = (ArrDcl) semanticStack.pop();
+                arrDcl.declare();
+                semanticStack.push(arrDcl);
+                break;
+            }
+            case "check2typesDCL": {
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 ArrDcl arrDcl = (ArrDcl) semanticStack.peek();
-                if(!type.equals(arrDcl.getType()))
+                if (!type.equals(arrDcl.getType()))
                     throw new RuntimeException("Types don't match");
+                break;
             }
-            case "setCheckDimDCL":{
+            case "setCheckDimDCL": {
                 Byte flag = (Byte) semanticStack.pop();
                 List<Expression> expressionList = new ArrayList<>();
                 int i = flag;
@@ -188,13 +197,13 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     i--;
                 }
                 ArrDcl arrDcl = (ArrDcl) semanticStack.pop();
-                if(flag!=arrDcl.getDimensions().size())
+                if (flag != arrDcl.getDimNum())
                     throw new RuntimeException("Number of dimensions doesn't match");
                 arrDcl.setDimensions(expressionList);
                 semanticStack.push(arrDcl);
                 break;
             }
-            case "mkAutoArrVarDCL":{
+            case "mkAutoArrVarDCL": {
                 Byte flag = (Byte) semanticStack.pop();
                 List<Expression> expressionList = new ArrayList<>();
                 while (flag > 0) {
@@ -205,10 +214,11 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 String name = (String) semanticStack.pop();
                 ArrDcl arrDcl;
                 if (semanticStack.peek() instanceof GlobalBlock)
-                    arrDcl = new ArrDcl(name,type,true,expressionList.size());
+                    arrDcl = new ArrDcl(name, type, true, expressionList.size());
                 else
-                    arrDcl = new ArrDcl(name,type,false,expressionList.size());
+                    arrDcl = new ArrDcl(name, type, false, expressionList.size());
                 arrDcl.setDimensions(expressionList);
+                arrDcl.declare();
                 semanticStack.push(arrDcl);
                 break;
             }
@@ -319,7 +329,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "cast": {
                 Expression exp = (Expression) semanticStack.pop();
-                Type newType = (Type) semanticStack.pop();
+                Type newType = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 semanticStack.push(new Cast(exp, newType));
                 break;
             }
@@ -337,6 +347,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 Variable var = (Variable) semanticStack.pop();
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
+                checkAssign(var);
                 semanticStack.push(new PostMM(var));
                 break;
             }
@@ -344,6 +355,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 Variable var = (Variable) semanticStack.pop();
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
+                checkAssign(var);
                 semanticStack.push(new PostPP(var));
                 break;
             }
@@ -351,6 +363,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 Variable var = (Variable) semanticStack.pop();
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
+                checkAssign(var);
                 semanticStack.push(new PreMM(var));
                 break;
             }
@@ -358,6 +371,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 Variable var = (Variable) semanticStack.pop();
                 if (var instanceof RecordVar)
                     throw new RuntimeException("Undefined operand for record type");
+                checkAssign(var);
                 semanticStack.push(new PrePP(var));
                 break;
             }
@@ -394,7 +408,11 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             /* -------------------------- variable ---------------------------- */
             case "pushVar": {
                 String name = (String) lexical.currentToken().getValue();
-                semanticStack.push(new SimpleVar(name));
+                DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(name);
+                if (dscp instanceof GlobalVarDSCP || dscp instanceof LocalVarDSCP)
+                    semanticStack.push(new SimpleVar(name,dscp.getType()));
+                else if (dscp instanceof GlobalArrDSCP || dscp instanceof LocalArrDSCP)
+                    semanticStack.push(new ArrayVar(name, new ArrayList<>(),dscp.getType()));
                 break;
             }
             case "flagpp": {
@@ -412,58 +430,64 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     expressionList.add((Expression) semanticStack.pop());
                     flag--;
                 }
-                SimpleVar var = (SimpleVar) semanticStack.pop();
-                semanticStack.push(new ArrayVar(var.getName(),expressionList));
+                ArrayVar var = (ArrayVar) semanticStack.pop();
+                semanticStack.push(new ArrayVar(var.getName(), expressionList,var.getType()));
                 break;
             }
             /* -------------------------- Assignment -------------------------- */
             case "assign": {
                 Expression exp = (Expression) semanticStack.pop();
                 Variable var = (Variable) semanticStack.pop();
+                checkAssign(var);
                 semanticStack.push(new Assign(exp, var));
                 break;
             }
             case "sumAssign": {
                 Expression exp = (Expression) semanticStack.pop();
                 Variable var = (Variable) semanticStack.pop();
+                checkAssign(var);
                 semanticStack.push(new SumAssign(exp, var));
                 break;
             }
             case "minAssign": {
                 Expression exp = (Expression) semanticStack.pop();
                 Variable var = (Variable) semanticStack.pop();
+                checkAssign(var);
                 semanticStack.push(new MinAssign(exp, var));
                 break;
             }
             case "divAssign": {
                 Expression exp = (Expression) semanticStack.pop();
                 Variable var = (Variable) semanticStack.pop();
+                checkAssign(var);
                 semanticStack.push(new DivAssign(exp, var));
                 break;
             }
             case "mulAssign": {
                 Expression exp = (Expression) semanticStack.pop();
                 Variable var = (Variable) semanticStack.pop();
+                checkAssign(var);
                 semanticStack.push(new MulAssign(exp, var));
                 break;
             }
             case "rmnAssign": {
                 Expression exp = (Expression) semanticStack.pop();
                 Variable var = (Variable) semanticStack.pop();
+                checkAssign(var);
                 semanticStack.push(new RmnAssign(exp, var));
                 break;
             }
-            case "check2Types":{
+            case "check2types": {
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 Variable variable = (Variable) semanticStack.pop();
-                if(!(variable instanceof ArrayVar))
+                if (!(variable instanceof ArrayVar))
                     throw new RuntimeException("You can't new a simple variable");
-                if(variable.getType()!= null &&!type.equals(variable.getType()))
+                if (variable.getType() != null && !type.equals(variable.getType()))
                     throw new RuntimeException("types don't match");
                 semanticStack.push(variable);
                 break;
             }
-            case "setCheckDim":{
+            case "setCheckDim": {
                 Byte flag = (Byte) semanticStack.pop();
                 List<Expression> expressionList = new ArrayList<>();
                 int i = flag;
@@ -472,10 +496,14 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     i--;
                 }
                 ArrayVar var = (ArrayVar) semanticStack.pop();
-                if(var.getDimensions().size() != flag)
-                    throw new RuntimeException("Number of dimensions doesn't match");
+                if (var.getDSCP() instanceof GlobalArrDSCP)
+                    if (((GlobalArrDSCP) var.getDSCP()).getDimNum() != flag)
+                        throw new RuntimeException("Number of dimensions doesn't match");
+                if (var.getDSCP() instanceof LocalArrDSCP)
+                    if (((LocalArrDSCP) var.getDSCP()).getDimNum() != flag)
+                        throw new RuntimeException("Number of dimensions doesn't match");
                 var.setDimensions(expressionList);
-                semanticStack.push(var);
+                semanticStack.push(new NOP());
                 break;
             }
             /* ---------------------- functions ---------------------------- */
@@ -653,16 +681,33 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             GlobalBlock.getInstance().addDeclaration(function);
 
 
-
-
-
-
-
-
-
-
-
         }
+
+    }
+
+    private void checkAssign(Variable variable) {
+        if (variable instanceof ArrayVar) {
+            ArrayVar var = (ArrayVar) variable;
+            int numberOfExp = var.getDimensions().size();
+            DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(var.getName());
+            if (dscp instanceof GlobalArrDSCP) {
+                if (((GlobalArrDSCP) dscp).getDimNum() != numberOfExp)
+                    throw new RuntimeException("you can't assign an expression to array");
+                System.out.println(((GlobalArrDSCP) dscp).getDimNum());
+            }
+            if (dscp instanceof LocalArrDSCP) {
+                if (((LocalArrDSCP) dscp).getDimNum() != numberOfExp)
+                    throw new RuntimeException("you can't assign an expression to array");
+                System.out.println(((LocalArrDSCP) dscp).getDimNum());
+            }
+        }
+    }
+}
+
+class NOP implements Operation{
+
+    @Override
+    public void codegen(MethodVisitor mv, ClassWriter cw) {
 
     }
 }

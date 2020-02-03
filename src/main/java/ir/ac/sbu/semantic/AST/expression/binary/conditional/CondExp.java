@@ -17,7 +17,9 @@ abstract class CondExp extends BinaryExp {
 
         firstop.codegen(mv, cw);
         secondop.codegen(mv, cw);
-        Type type = getType();
+        if(!firstop.getType().equals(secondop.getType()))
+            throw new RuntimeException("types not match for " + this.getClass().getName());
+        type = firstop.getType();
         int opcode;
 
         if (type == Type.FLOAT_TYPE){
@@ -74,7 +76,10 @@ abstract class CondExp extends BinaryExp {
         mv.visitInsn(isAnd? ICONST_0 : ICONST_1);
         mv.visitLabel(EndLabel);
 
-        Type type = getType();
+
+        if(!firstop.getType().equals(secondop.getType()))
+            throw new RuntimeException("types not match for " + this.getClass().getName());
+        type = firstop.getType();
 
         if (type != Type.BOOLEAN_TYPE && type != Type.INT_TYPE)
             throw new RuntimeException("Only boolean and int Types Can Be Operands Of Conditional And");

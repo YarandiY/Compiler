@@ -18,12 +18,13 @@ public class PostPP extends UnaryExp implements InitExp, StepExp {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
+        type = operand.getType();
         if (!(operand instanceof Variable) || (type != Type.INT_TYPE && type != Type.DOUBLE_TYPE && type != Type.LONG_TYPE && type != Type.FLOAT_TYPE))
             throw new RuntimeException("the operand is wrong");
         Variable var = (Variable)operand;
         checkConst(var);
         // storing the last value in temporary variable
-        new SimpleVar(var.getName()).codegen(mv, cw);
+        new SimpleVar(var.getName(), var.getType()).codegen(mv, cw);
         new SumAssign(new IntegerConst(1), var).codegen(mv, cw);
     }
 }

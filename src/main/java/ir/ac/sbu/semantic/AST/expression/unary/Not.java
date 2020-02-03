@@ -18,6 +18,7 @@ public class Not extends UnaryExp { //not
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         operand.codegen(mv,cw);
+        type = operand.getType();
         if(type != Type.INT_TYPE && type != Type.LONG_TYPE && type != Type.BOOLEAN_TYPE)
             throw new RuntimeException("It's not real or integer or bool.so I can't not it!");
         Object res = ((ConstantExp)operand).getValue();

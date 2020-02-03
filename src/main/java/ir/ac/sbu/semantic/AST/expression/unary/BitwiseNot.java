@@ -20,7 +20,7 @@ public class BitwiseNot extends UnaryExp {  //~
         if(operand.getType() != Type.INT_TYPE && operand.getType() != Type.LONG_TYPE)
             throw new RuntimeException("It's not real or integer.so I can't not it!");
         mv.visitInsn(ICONST_M1);
+        type = operand.getType();
         mv.visitInsn(type.getOpcode(IXOR));
-        //type = operand.getType();
     }
 }

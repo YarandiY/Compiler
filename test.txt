@@ -1,20 +1,13 @@
-
-function int b();
-
-function char b(int k)
+/#function char b(int k)
 begin
+int h = 22222;
 return 'f';
-end
+end#/
 
 
 function void start()
 begin
-const int a = 2;
-int c = b();
+string d = "as";
 return;
 end
 
-function int b()
-begin
-return 3;
-end
