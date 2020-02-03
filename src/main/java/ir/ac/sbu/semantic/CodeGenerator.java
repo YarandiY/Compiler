@@ -11,6 +11,7 @@ import ir.ac.sbu.semantic.AST.declaration.variable.SimpleVarDcl;
 import ir.ac.sbu.semantic.AST.declaration.variable.VarDCL;
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.FuncCall;
+import ir.ac.sbu.semantic.AST.expression.Input;
 import ir.ac.sbu.semantic.AST.expression.Sizeof;
 import ir.ac.sbu.semantic.AST.expression.binary.arithmetic.*;
 import ir.ac.sbu.semantic.AST.expression.binary.conditional.*;
@@ -673,9 +674,12 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             case "input": {
+                String type = (String) lexical.currentToken().getValue();
+                semanticStack.push(new Input(SymbolTableHandler.getTypeFromName(type)));
                 break;
             }
             case "inputLine": {
+                semanticStack.push(new Input(null));
                 break;
             }
             case "len": {

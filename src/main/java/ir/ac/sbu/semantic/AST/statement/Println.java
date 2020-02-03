@@ -31,6 +31,5 @@ public class Println extends Statement {
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
                     "("+ expression.getType() +")V", false);
         }
-
     }
 }

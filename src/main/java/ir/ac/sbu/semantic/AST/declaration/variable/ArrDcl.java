@@ -48,7 +48,7 @@ public class ArrDcl extends VarDCL {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         if (global){
-            executeGlobalExp(cw);
+            executeGlobalExp(cw, mv);
             //TODO what is it?
             String repeatedArray = new String(new char[dimensions.size()]).replace("\0", "[");
             Type arrayType = Type.getType(repeatedArray + type.getDescriptor());
@@ -73,16 +73,11 @@ public class ArrDcl extends VarDCL {
         }
     }
 
-    private void executeGlobalExp(ClassWriter cw){
-        MethodVisitor mv = cw.visitMethod(ACC_STATIC, "<clinit>",
-                "()V", null, null);
-        mv.visitCode();
+    private void executeGlobalExp(ClassWriter cw,MethodVisitor mv){
         for (Expression dim :
                 dimensions) {
             dim.codegen(mv,cw);
         }
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
     }
 
     public static void declare(String name,Type type,List<Expression> dimensions,int dimNum,boolean global) {
