@@ -67,8 +67,14 @@ public class ArrDcl extends VarDCL {
                     mv.visitTypeInsn(ANEWARRAY, getType().getElementType().getInternalName());
                 else
                     mv.visitIntInsn(NEWARRAY, SymbolTableHandler.getTType(getType().getElementType()));
-            } else
-                mv.visitMultiANewArrayInsn(type.getDescriptor(), dimensions.size());
+            } else{
+                String t = "";
+                for (int i = 0; i < dimNum; i++) {
+                    t += "[";
+                }
+                t += type.getDescriptor();
+                mv.visitMultiANewArrayInsn(t, dimensions.size());
+            }
             mv.visitVarInsn(ASTORE, SymbolTableHandler.getInstance().getIndex());
         }
     }
