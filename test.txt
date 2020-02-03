@@ -1,17 +1,13 @@
-/#function char b(int k)
+function int b(int k)
 begin
-int h = 22222;
-return 'f';
-end#/
+int g = 3;
+return g;
+end
 
 
 function void start()
 begin
-repeat
-begin
-2 + 3;
-end
-until(true);
+int a = 5;
 return;
 end
 

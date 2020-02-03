@@ -73,7 +73,8 @@ public class SimpleVarDcl extends VarDCL {
         } else if (exp != null) {
             exp.codegen(mv, cw);
             if (!exp.getType().equals(type))
-                throw new RuntimeException("the type of variable and expression doesn't match");
+                throw new RuntimeException("the type of variable and expression doesn't match" +
+                        "   " + "the type of var " + type + "   " + "the type of exp " + exp.getType());
             LocalVarDSCP dscp = (LocalVarDSCP) SymbolTableHandler.getInstance().getDescriptor(name);
             mv.visitVarInsn(type.getOpcode(ISTORE), dscp.getIndex());
         }
@@ -102,7 +103,7 @@ public class SimpleVarDcl extends VarDCL {
         DSCP dscp;
         if (!global)
             dscp = new LocalVarDSCP(type, exp != null,
-                    SymbolTableHandler.getInstance().newIndex(), constant);
+                    SymbolTableHandler.getInstance().getIndex(), constant);
         else
             dscp = new GlobalVarDSCP(type, exp != null, constant);
 
