@@ -1,5 +1,4 @@
 
-function int b();
 
 function char b(int k)
 begin
@@ -8,14 +7,9 @@ end
 
 function void start()
 begin
-const int a = 2;
-int c = b();
+int[][] a;
+##int c = b("salam");
+a = 3;
 return;
 end
 
-
-
-function int b()
-begin
-return 3;
-end

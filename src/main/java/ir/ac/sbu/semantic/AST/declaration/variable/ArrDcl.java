@@ -17,24 +17,28 @@ import static org.objectweb.asm.Opcodes.*;
 public class ArrDcl extends VarDCL {
 
     private List<Expression> dimensions;
+    private int dimNum;
 
-    public ArrDcl(String name, Type type, boolean global, int dimSize) {
+    public ArrDcl(String name, Type type, boolean global, int dimNum) {
         this.name = name;
         this.type = type;
         this.global = global;
-        dimensions = new ArrayList<>(dimSize);
+        dimensions = new ArrayList<>(dimNum);
+        this.dimNum = dimNum;
     }
 
-    public ArrDcl(String name, String stringType, boolean global, Integer dimSize, Type type, List<Expression> dimensions) {
+    public ArrDcl(String name, String stringType, boolean global, Integer dimNum, Type type, List<Expression> dimensions) {
         this.name = name;
         if (!stringType.equals("auto")) {
             if (!SymbolTableHandler.getTypeFromName(stringType).equals(type))
                 throw new RuntimeException("the types of array doesn't match");
         } else if (dimensions == null)
             throw new RuntimeException("auto variables must have been initialized");
-        if (dimSize != null)
-            if (dimSize != dimensions.size())
+        if (dimNum != null) {
+            if (dimNum != dimensions.size())
                 throw new RuntimeException("dimensions are't correct");
+            this.dimNum = dimNum;
+        }
         this.type = type;
         this.global = global;
         this.dimensions = dimensions;
@@ -44,7 +48,6 @@ public class ArrDcl extends VarDCL {
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         if (global){
             executeGlobalExp(cw);
-            declare();
             //TODO what is it?
             String repeatedArray = new String(new char[dimensions.size()]).replace("\0", "[");
             Type arrayType = Type.getType(repeatedArray + type.getDescriptor());
@@ -52,7 +55,6 @@ public class ArrDcl extends VarDCL {
         }
         else {
             dimensions.forEach((dim) -> dim.codegen(mv, cw));
-            declare();
             if (dimensions.size() == 1) {
                 if (type.getDescriptor().endsWith(";"))
                     mv.visitTypeInsn(ANEWARRAY, getType().getElementType().getInternalName());
@@ -73,7 +75,7 @@ public class ArrDcl extends VarDCL {
         mv.visitEnd();
     }
 
-    private void declare() {
+    public void declare() {
         DSCP dscp;
         if (!global)
             dscp = new LocalArrDSCP(type, true, SymbolTableHandler.getInstance().newIndex(), dimensions);

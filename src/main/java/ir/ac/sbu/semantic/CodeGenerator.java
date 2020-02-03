@@ -93,7 +93,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(function);
                 break;
             }
-            case "addFuncDCL":{
+            case "addFuncDCL": {
                 FunctionDcl function = (FunctionDcl) semanticStack.pop();
                 function.declare();
                 semanticStack.push(function);
@@ -157,29 +157,35 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(varDcl);
                 break;
             }
-            case "dimpp":{
+            case "dimpp": {
                 Byte flag = (Byte) semanticStack.pop();
                 flag++;
                 semanticStack.push(flag);
                 break;
             }
-            case "mkArrayVarDCL":{
+            case "mkArrayVarDCL": {
                 String name = (String) lexical.currentToken().getValue();
                 Byte flag = (Byte) semanticStack.pop();
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 if (semanticStack.peek() instanceof GlobalBlock)
-                    semanticStack.push(new ArrDcl(name,type,true,flag));
+                    semanticStack.push(new ArrDcl(name, type, true, flag));
                 else
-                    semanticStack.push(new ArrDcl(name,type,false,flag));
+                    semanticStack.push(new ArrDcl(name, type, false, flag));
                 break;
             }
-            case "check2typesDCL":{
+            case "addArrDcl":{
+                ArrDcl arrDcl = (ArrDcl) semanticStack.pop();
+                arrDcl.declare();
+                break;
+            }
+            case "check2typesDCL": {
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 ArrDcl arrDcl = (ArrDcl) semanticStack.peek();
-                if(!type.equals(arrDcl.getType()))
+                if (!type.equals(arrDcl.getType()))
                     throw new RuntimeException("Types don't match");
+                break;
             }
-            case "setCheckDimDCL":{
+            case "setCheckDimDCL": {
                 Byte flag = (Byte) semanticStack.pop();
                 List<Expression> expressionList = new ArrayList<>();
                 int i = flag;
@@ -188,13 +194,13 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     i--;
                 }
                 ArrDcl arrDcl = (ArrDcl) semanticStack.pop();
-                if(flag!=arrDcl.getDimensions().size())
+                if (flag != arrDcl.getDimNum())
                     throw new RuntimeException("Number of dimensions doesn't match");
                 arrDcl.setDimensions(expressionList);
                 semanticStack.push(arrDcl);
                 break;
             }
-            case "mkAutoArrVarDCL":{
+            case "mkAutoArrVarDCL": {
                 Byte flag = (Byte) semanticStack.pop();
                 List<Expression> expressionList = new ArrayList<>();
                 while (flag > 0) {
@@ -205,10 +211,11 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 String name = (String) semanticStack.pop();
                 ArrDcl arrDcl;
                 if (semanticStack.peek() instanceof GlobalBlock)
-                    arrDcl = new ArrDcl(name,type,true,expressionList.size());
+                    arrDcl = new ArrDcl(name, type, true, expressionList.size());
                 else
-                    arrDcl = new ArrDcl(name,type,false,expressionList.size());
+                    arrDcl = new ArrDcl(name, type, false, expressionList.size());
                 arrDcl.setDimensions(expressionList);
+                arrDcl.declare();
                 semanticStack.push(arrDcl);
                 break;
             }
@@ -413,7 +420,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     flag--;
                 }
                 SimpleVar var = (SimpleVar) semanticStack.pop();
-                semanticStack.push(new ArrayVar(var.getName(),expressionList));
+                semanticStack.push(new ArrayVar(var.getName(), expressionList));
                 break;
             }
             /* -------------------------- Assignment -------------------------- */
@@ -453,17 +460,17 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(new RmnAssign(exp, var));
                 break;
             }
-            case "check2Types":{
+            case "check2types": {
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 Variable variable = (Variable) semanticStack.pop();
-                if(!(variable instanceof ArrayVar))
+                if (!(variable instanceof ArrayVar))
                     throw new RuntimeException("You can't new a simple variable");
-                if(variable.getType()!= null &&!type.equals(variable.getType()))
+                if (variable.getType() != null && !type.equals(variable.getType()))
                     throw new RuntimeException("types don't match");
                 semanticStack.push(variable);
                 break;
             }
-            case "setCheckDim":{
+            case "setCheckDim": {
                 Byte flag = (Byte) semanticStack.pop();
                 List<Expression> expressionList = new ArrayList<>();
                 int i = flag;
@@ -472,7 +479,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     i--;
                 }
                 ArrayVar var = (ArrayVar) semanticStack.pop();
-                if(var.getDimensions().size() != flag)
+                if (var.getDimensions().size() != flag)
                     throw new RuntimeException("Number of dimensions doesn't match");
                 var.setDimensions(expressionList);
                 semanticStack.push(var);
@@ -651,15 +658,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 throw new RuntimeException("the function is duplicate!!!");
         } else {
             GlobalBlock.getInstance().addDeclaration(function);
-
-
-
-
-
-
-
-
-
 
 
         }
