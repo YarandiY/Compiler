@@ -222,7 +222,7 @@ public class SymbolTableHandler {
                 return stackScopes.get(symbolTbl).get(name);
             symbolTbl--;
         }
-        throw new RuntimeException("the name doesn't exist");
+        throw new RuntimeException("the name " + name +" doesn't exist");
     }
 
     public boolean canHaveBreak() {

@@ -83,6 +83,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 FunctionDcl functionDcl = new FunctionDcl(type,
                         (String) lexical.currentToken().getValue(), null, new ArrayList<>());
                 semanticStack.push(functionDcl);
+                SymbolTableHandler.getInstance().setLastFunction(functionDcl);
                 break;
             }
             case "addParameter": {
@@ -97,6 +98,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 FunctionDcl function = (FunctionDcl) semanticStack.pop();
                 function.setBlock(block);
                 semanticStack.push(function);
+                SymbolTableHandler.getInstance().setLastFunction(null);
                 break;
             }
             case "addFuncDCL": {
@@ -170,30 +172,20 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(flag);
                 break;
             }
-            case "mkArrayVarDCL": {
+            case "arrDCL": {
                 String name = (String) lexical.currentToken().getValue();
                 Byte flag = (Byte) semanticStack.pop();
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 if (semanticStack.peek() instanceof GlobalBlock)
-                    semanticStack.push(new ArrDcl(name, type, true, flag));
+                    ArrDcl.declare(name, type, new ArrayList<>(), flag, true);
                 else
-                    semanticStack.push(new ArrDcl(name, type, false, flag));
+                    ArrDcl.declare(name, type, new ArrayList<>(), flag, false);
+                NOP nop = new NOP();
+                nop.name = name;
+                semanticStack.push(new NOP());
                 break;
             }
-            case "addArrDCL": {
-                ArrDcl arrDcl = (ArrDcl) semanticStack.pop();
-                arrDcl.declare();
-                semanticStack.push(arrDcl);
-                break;
-            }
-            case "check2typesDCL": {
-                Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
-                ArrDcl arrDcl = (ArrDcl) semanticStack.peek();
-                if (!type.equals(arrDcl.getType()))
-                    throw new RuntimeException("Types don't match");
-                break;
-            }
-            case "setCheckDimDCL": {
+            case "mkArrayVarDCL": {
                 Byte flag = (Byte) semanticStack.pop();
                 List<Expression> expressionList = new ArrayList<>();
                 int i = flag;
@@ -201,10 +193,24 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     expressionList.add((Expression) semanticStack.pop());
                     i--;
                 }
-                ArrDcl arrDcl = (ArrDcl) semanticStack.pop();
-                if (flag != arrDcl.getDimNum())
-                    throw new RuntimeException("Number of dimensions doesn't match");
-                arrDcl.setDimensions(expressionList);
+                Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
+                String name = ((NOP) semanticStack.pop()).name;
+                DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(name);
+                if(!dscp.getType().equals(type))
+                    throw new RuntimeException("Types don't match");
+                ArrDcl arrDcl;
+                if (semanticStack.peek() instanceof GlobalBlock){
+                    if(((GlobalArrDSCP)dscp).getDimNum() != flag)
+                        throw new RuntimeException("Number of dimensions doesn't match");
+                    arrDcl = new ArrDcl(name, type, true, flag);
+                    ((GlobalArrDSCP)dscp).setDimList(expressionList);
+                }
+                else{
+                    if(((LocalArrDSCP)dscp).getDimNum() != flag)
+                        throw new RuntimeException("Number of dimensions doesn't match");
+                    arrDcl = new ArrDcl(name, type, false, flag);
+                    ((LocalArrDSCP)dscp).setDimList(expressionList);
+                }
                 semanticStack.push(arrDcl);
                 break;
             }
@@ -218,12 +224,15 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
                 String name = (String) semanticStack.pop();
                 ArrDcl arrDcl;
-                if (semanticStack.peek() instanceof GlobalBlock)
+                if (semanticStack.peek() instanceof GlobalBlock){
                     arrDcl = new ArrDcl(name, type, true, expressionList.size());
-                else
+                    arrDcl.declare(name,type,expressionList,expressionList.size(),true);
+                }
+                else{
                     arrDcl = new ArrDcl(name, type, false, expressionList.size());
+                    arrDcl.declare(name,type,expressionList,expressionList.size(),false);
+                }
                 arrDcl.setDimensions(expressionList);
-                arrDcl.declare();
                 semanticStack.push(arrDcl);
                 break;
             }
@@ -415,9 +424,9 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 String name = (String) lexical.currentToken().getValue();
                 DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(name);
                 if (dscp instanceof GlobalVarDSCP || dscp instanceof LocalVarDSCP)
-                    semanticStack.push(new SimpleVar(name,dscp.getType()));
+                    semanticStack.push(new SimpleVar(name, dscp.getType()));
                 else if (dscp instanceof GlobalArrDSCP || dscp instanceof LocalArrDSCP)
-                    semanticStack.push(new ArrayVar(name, new ArrayList<>(),dscp.getType()));
+                    semanticStack.push(new ArrayVar(name, new ArrayList<>(), dscp.getType()));
                 break;
             }
             case "flagpp": {
@@ -436,7 +445,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     flag--;
                 }
                 ArrayVar var = (ArrayVar) semanticStack.pop();
-                semanticStack.push(new ArrayVar(var.getName(), expressionList,var.getType()));
+                semanticStack.push(new ArrayVar(var.getName(), expressionList, var.getType()));
                 break;
             }
             /* -------------------------- Assignment -------------------------- */
@@ -514,20 +523,20 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             /* ---------------------- functions ---------------------------- */
             case "voidReturn": {
                 Block block = (Block) semanticStack.pop();
-                FunctionDcl functionDcl = (FunctionDcl) semanticStack.pop();
+                FunctionDcl functionDcl = SymbolTableHandler.getInstance().getLastFunction();
                 FuncReturn funcReturn = new FuncReturn(null, functionDcl);
                 functionDcl.addReturn(funcReturn);
                 block.addOperation(funcReturn);
-                semanticStack.push(functionDcl);
                 semanticStack.push(block);
                 break;
             }
             case "return": {
                 Expression exp = (Expression) semanticStack.pop();
                 Block block = (Block) semanticStack.pop();
-                FunctionDcl functionDcl = (FunctionDcl) semanticStack.pop();
-                block.addOperation(new FuncReturn(exp, functionDcl));
-                semanticStack.push(functionDcl);
+                FunctionDcl functionDcl = SymbolTableHandler.getInstance().getLastFunction();
+                FuncReturn funcReturn = new FuncReturn(exp, functionDcl);
+                functionDcl.addReturn(funcReturn);
+                block.addOperation(funcReturn);
                 semanticStack.push(block);
                 break;
             }
@@ -708,7 +717,11 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
     }
 }
 
-class NOP implements Operation{
+class NOP implements Operation {
+
+    String name;
+
+
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {

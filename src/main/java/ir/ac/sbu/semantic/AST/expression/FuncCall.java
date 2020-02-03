@@ -36,7 +36,10 @@ public class FuncCall extends Expression implements Operation {
             parameter.codegen(mv, cw);
         }
         ArrayList<Type> paramTypes = new ArrayList<>();
-        parameters.forEach((param) -> paramTypes.add(param.getType()));
+        for (Expression exp :
+                parameters) {
+            paramTypes.add(exp.getType());
+        }
         this.func = SymbolTableHandler.getInstance().getFunction(id, paramTypes);
         this.type = func.getType();
         if (parameters.size() != func.getParameters().size())

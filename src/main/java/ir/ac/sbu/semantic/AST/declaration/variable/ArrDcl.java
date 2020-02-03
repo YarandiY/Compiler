@@ -1,6 +1,7 @@
 package ir.ac.sbu.semantic.AST.declaration.variable;
 
 import ir.ac.sbu.semantic.AST.expression.Expression;
+import ir.ac.sbu.semantic.AST.expression.constant.IntegerConst;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.*;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import lombok.Data;
@@ -54,15 +55,21 @@ public class ArrDcl extends VarDCL {
             cw.visitField(ACC_STATIC, name, arrayType.getDescriptor(), null, null).visitEnd();
         }
         else {
-            dimensions.forEach((dim) -> dim.codegen(mv, cw));
-            if (dimensions.size() == 1) {
+            for (Expression dim :
+                    dimensions ) {
+                dim.codegen(mv, cw);
+            }
+            if(dimensions.size() == 0){
+                new IntegerConst(1000).codegen(mv, cw);
+            }
+            if (dimNum == 1) {
                 if (type.getDescriptor().endsWith(";"))
                     mv.visitTypeInsn(ANEWARRAY, getType().getElementType().getInternalName());
                 else
                     mv.visitIntInsn(NEWARRAY, SymbolTableHandler.getTType(getType().getElementType()));
             } else
                 mv.visitMultiANewArrayInsn(type.getDescriptor(), dimensions.size());
-            mv.visitVarInsn(ASTORE, ((LocalDSCP) SymbolTableHandler.getInstance().getDescriptor(name)).getIndex());
+            mv.visitVarInsn(ASTORE, SymbolTableHandler.getInstance().getIndex());
         }
     }
 
@@ -70,12 +77,15 @@ public class ArrDcl extends VarDCL {
         MethodVisitor mv = cw.visitMethod(ACC_STATIC, "<clinit>",
                 "()V", null, null);
         mv.visitCode();
-        dimensions.forEach((dim) -> dim.codegen(mv, cw));
+        for (Expression dim :
+                dimensions) {
+            dim.codegen(mv,cw);
+        }
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
-    public void declare() {
+    public static void declare(String name,Type type,List<Expression> dimensions,int dimNum,boolean global) {
         DSCP dscp;
         if (!global)
             dscp = new LocalArrDSCP(type, true, SymbolTableHandler.getInstance().getIndex(), dimensions, dimNum);

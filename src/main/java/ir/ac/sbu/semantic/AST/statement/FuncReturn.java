@@ -18,12 +18,6 @@ public class FuncReturn extends Statement {
 
     public FuncReturn(Expression expression,FunctionDcl funcDcl) {
         this.expression = expression;
-        scope = SymbolTableHandler.getInstance().getLastScope();
-        funcDcl.getReturns().forEach((r) -> {
-            if(r.scope == scope) {
-                throw new RuntimeException("more than one return in single scope -__-");
-            }
-        });
         funcDcl.addReturn(this);
         if((expression == null && !funcDcl.getType().equals(Type.VOID_TYPE)) ||
                 (expression != null && (funcDcl.getType().equals(Type.VOID_TYPE) ||
@@ -33,15 +27,23 @@ public class FuncReturn extends Statement {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        System.out.println("3");
         FunctionDcl functionDcl = SymbolTableHandler.getInstance().getLastFunction();
+        scope = SymbolTableHandler.getInstance().getLastScope();
+        int index = functionDcl.getReturns().indexOf(this);
+        for (int i = 0; i < index; i++)  {
+            FuncReturn funcReturn = functionDcl.getReturns().get(i);
+            if(funcReturn.scope.equals(scope)) {
+                throw new RuntimeException("more than one return in single scope -__-");
+            }
+        }
         if(expression == null) {
             mv.visitInsn(RETURN);
-            System.out.println("4");
         }
         else {
-            System.out.println("5");
-            mv.visitInsn(Cast.getOpcode(expression.getType(),functionDcl.getType()));
+            expression.codegen(mv, cw);
+            //mv.visitInsn(Cast.getOpcode(expression.getType(),functionDcl.getType()));
+            if(!expression.getType().equals(functionDcl.getType()))
+                throw new RuntimeException("Return types don't match");
             mv.visitInsn(expression.getType().getOpcode(IRETURN));
         }
 

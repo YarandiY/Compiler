@@ -34,7 +34,10 @@ public class GlobalBlock implements Node {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        declarationList.forEach(declaration -> declaration.codegen(mv, cw));
+        for (Declaration dec :
+                declarationList) {
+            dec.codegen(mv, cw);
+        }
         new FuncCall("start",new ArrayList<>()).codegen(mv, cw);
     }
 }

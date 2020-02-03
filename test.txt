@@ -1,13 +1,14 @@
-function int b(int k)
+function int b(float[] kar,char c)
 begin
 int g = 3;
-return g;
+c = 'h';
+return 3;
 end
 
 
 function void start()
 begin
-int a = 5;
+int[] aseman = new int[3];
 return;
 end
 
