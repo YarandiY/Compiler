@@ -25,7 +25,7 @@ public class SimpleVar extends Variable{
             int index = ((LocalVarDSCP) dscp).getIndex();
             mv.visitVarInsn(type.getOpcode(ILOAD), index);
         } else {
-            mv.visitFieldInsn(GETSTATIC, cw.toString(), name, type.getDescriptor());
+            mv.visitFieldInsn(GETSTATIC,"Main" , name, type.getDescriptor());
         }
     }
 }

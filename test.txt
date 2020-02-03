@@ -1,4 +1,4 @@
-function char b(double[] kar,char c)
+function char b(double kar,char c)
 begin
 double a = 5.6;
 c = 'h';
@@ -6,7 +6,7 @@ return 'k';
 end
 
 int afff = 5;
-int www = afff;
+int afffdf = afff;
 
 function void start()
 begin

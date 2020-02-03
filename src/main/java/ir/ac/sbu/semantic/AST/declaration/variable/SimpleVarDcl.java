@@ -64,7 +64,7 @@ public class SimpleVarDcl extends VarDCL {
             cw.visitField(access, name, type.getDescriptor(),
                     null, value).visitEnd();
             if (exp != null) {
-                executeGlobalExp(cw);
+                executeGlobalExp(cw,mv);
             }
         } else if (exp != null) {
             exp.codegen(mv, cw);
@@ -84,15 +84,8 @@ public class SimpleVarDcl extends VarDCL {
         type = exp.getType();
     }
 
-    private void executeGlobalExp(ClassWriter cw) {
-        int access = ACC_STATIC;
-        access += constant ? ACC_FINAL : 0;
-        MethodVisitor mv = cw.visitMethod(access, "<clinit>",
-                "()V", null, null);
-        mv.visitCode();
+    private void executeGlobalExp(ClassWriter cw,MethodVisitor mv) {
         assign(new SimpleVar(name, type), exp, mv, cw);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
     }
 
     private void declare() {
