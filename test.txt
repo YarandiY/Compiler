@@ -6,13 +6,14 @@ begin
 return 'f';
 end
 
-
 function void start()
 begin
 const int a = 2;
 int c = b();
 return;
 end
+
+
 
 function int b()
 begin
