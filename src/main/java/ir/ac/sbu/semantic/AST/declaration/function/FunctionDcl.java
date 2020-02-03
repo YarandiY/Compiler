@@ -40,7 +40,7 @@ public class FunctionDcl implements Declaration {
         ParamPair param = new ParamPair(name,dscp);
         parameters.add(param);
         if (dscp instanceof LocalVarDSCP)
-            paramTypes.add(type);
+            paramTypes.add(dscp.getType());
         else if (dscp instanceof LocalArrDSCP)
             paramTypes.add(Type.getType("[" + dscp.getType()));
     }
