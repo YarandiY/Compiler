@@ -88,7 +88,7 @@ public class SimpleVarDcl extends VarDCL {
         assign(new SimpleVar(name, type), exp, mv, cw);
     }
 
-    private void declare() {
+    public void declare() {
         DSCP dscp;
         if (!global)
             dscp = new LocalVarDSCP(type, exp != null,

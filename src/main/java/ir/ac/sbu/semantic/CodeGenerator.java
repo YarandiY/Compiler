@@ -124,14 +124,10 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             case "constTrue": {
-                SimpleVarDcl var = (SimpleVarDcl) semanticStack.pop();
-                DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(var.getName());
-                if (dscp instanceof GlobalVarDSCP)
-                    ((GlobalVarDSCP) dscp).setConstant(true);
-                if (dscp instanceof LocalVarDSCP)
-                    ((LocalVarDSCP) dscp).setConstant(true);
-                var.setConstant(true);
-                semanticStack.push(var);
+                String varName = ((NOP) semanticStack.pop()).name;
+                DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(varName);
+                dscp.setConstant(true);
+                semanticStack.push(new NOP(varName));
                 break;
             }
             case "pushBlock": {  //begin
@@ -170,6 +166,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     varDcl = new SimpleVarDcl(varName, "auto", false, true, exp);
                 else
                     varDcl = new SimpleVarDcl(varName, "auto", false, false, exp);
+                varDcl.declare();
                 semanticStack.push(varDcl);
                 break;
             }
