@@ -83,7 +83,7 @@ public class FunctionDcl implements Declaration {
         block.codegen(methodVisitor, cw);
         if (returns.size() == 0)
             throw new RuntimeException("You must use at least one return statement in function!");
-        methodVisitor.visitMaxs(0, 0);
+//        methodVisitor.visitMaxs(0, 0);
         methodVisitor.visitEnd();
         SymbolTableHandler.getInstance().popScope();
         SymbolTableHandler.getInstance().setLastFunction(null);

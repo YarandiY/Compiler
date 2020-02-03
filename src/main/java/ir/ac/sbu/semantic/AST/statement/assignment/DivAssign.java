@@ -33,6 +33,6 @@ public class DivAssign extends Assignment{
             mv.visitVarInsn(variable.getType().getOpcode(ISTORE), index);
         }
         else
-            mv.visitFieldInsn(PUTSTATIC, "$Main", variable.getName(), dscp.getType().toString());
+            mv.visitFieldInsn(PUTSTATIC, "Test", variable.getName(), dscp.getType().toString());
     }
 }

@@ -44,6 +44,6 @@ public class FuncCall extends Expression implements Operation {
         this.type = func.getType();
         if (parameters.size() != func.getParameters().size())
             throw new RuntimeException("error in func parameter");
-        mv.visitMethodInsn(INVOKESTATIC, "$Main", func.getName(), func.getSignature(), false);
+        mv.visitMethodInsn(INVOKESTATIC, "Main", func.getName(), func.getSignature(), false);
     }
 }

@@ -1,15 +1,29 @@
-function int b(double kar,char c)
+function char b(double[] kar,char c)
 begin
 double a = 5.6;
 c = 'h';
-return 3;
+return 'k';
 end
 
+int afff = 5;
+int www = afff;
 
 function void start()
 begin
-int[] aseman = new int[3];
-int jjj = b(1.5,'h');
+int i = 4;
+println(i);
+switch(i) of begin
+case 1:begin
+int jbsd = 2;
+if(jbsd == 2)begin
+jbsd = 7;
+end
+jbsd = 5;
+end
+case 4:begin
+char mn = 's';
+end
+end
 return;
 end
 

@@ -26,6 +26,7 @@ import ir.ac.sbu.semantic.AST.statement.Condition.If;
 import ir.ac.sbu.semantic.AST.statement.Condition.Switch;
 import ir.ac.sbu.semantic.AST.statement.Continue;
 import ir.ac.sbu.semantic.AST.statement.FuncReturn;
+import ir.ac.sbu.semantic.AST.statement.Println;
 import ir.ac.sbu.semantic.AST.statement.assignment.*;
 import ir.ac.sbu.semantic.AST.statement.loop.For;
 import ir.ac.sbu.semantic.AST.statement.loop.InitExp;
@@ -39,6 +40,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import javax.print.attribute.standard.NumberUp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -571,8 +573,8 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "changeTop": {
                 Expression exp = (Expression) semanticStack.pop();
                 Byte flag = (Byte) semanticStack.pop();
-                semanticStack.push(flag);
                 semanticStack.push(exp);
+                semanticStack.push(flag);
                 break;
             }
             case "trueInitFlag": {
@@ -662,9 +664,12 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             /* --------------------- special method calls --------------------- */
             case "print": {
+                Expression expression = (Expression) semanticStack.pop();
+                semanticStack.push(new Println(expression));
                 break;
             }
             case "printLine": {
+                semanticStack.push(new Println(null));
                 break;
             }
             case "input": {

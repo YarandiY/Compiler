@@ -13,7 +13,7 @@ public class SymbolTable extends HashMap<String, DSCP> {
     private Scope typeOfScope;
 
     public void addIndex(int add){
-        index += add;
+        index++;
     }
 
     public int getIndex (){

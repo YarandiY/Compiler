@@ -34,6 +34,6 @@ public class SumAssign extends Assignment {
             mv.visitVarInsn(variable.getType().getOpcode(ISTORE), index);
         }
         else
-            mv.visitFieldInsn(PUTSTATIC, "$Main", variable.getName(), dscp.getType().toString());
+            mv.visitFieldInsn(PUTSTATIC, "Main", variable.getName(), dscp.getType().toString());
     }
 }

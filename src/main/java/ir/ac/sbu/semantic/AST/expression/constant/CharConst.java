@@ -21,6 +21,7 @@ public class CharConst extends ConstantExp {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        IntegerConst.storeIntValue(mv, Integer.valueOf(value));
+        //IntegerConst.storeIntValue(mv, Integer.valueOf(value));
+        mv.visitLdcInsn(value);
     }
 }
