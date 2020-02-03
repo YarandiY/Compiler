@@ -36,8 +36,6 @@ public class SimpleVarDcl extends VarDCL {
         this.type = type;
         this.constant = constant;
         this.global = global;
-        // to fill DSCP and add to Symbol table
-        declare();
     }
 
     public SimpleVarDcl(String varName, String type, boolean constant, boolean global, Expression exp) {
@@ -55,8 +53,6 @@ public class SimpleVarDcl extends VarDCL {
                 throw new RuntimeException("the auto variable must be have expression");
             else
                 phonyExpExe();
-        // to fill DSCP and add to Symbol table
-        declare();
     }
 
     @Override

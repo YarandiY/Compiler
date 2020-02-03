@@ -6,7 +6,6 @@ import org.objectweb.asm.Type;
 @Data
 public class GlobalVarDSCP extends GlobalDSCP {
 
-    protected boolean constant;
 
     public GlobalVarDSCP(Type type, boolean isValid, boolean constant) {
         super(type, isValid);

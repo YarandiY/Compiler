@@ -40,6 +40,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
@@ -87,9 +88,10 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             case "addParameter": {
-                VarDCL varDCL = (VarDCL) semanticStack.pop();
+                String name = ((NOP) semanticStack.pop()).name;
+                LocalDSCP dscp = (LocalDSCP) SymbolTableHandler.getInstance().getDescriptor(name);
                 FunctionDcl function = (FunctionDcl) semanticStack.pop();
-                function.addParameter(varDCL);
+                function.addParameter(name,dscp);
                 semanticStack.push(function);
                 break;
             }
@@ -110,12 +112,12 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             case "mkSimpleVarDCL": {
                 String name = (String) lexical.currentToken().getValue();
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
-                SimpleVarDcl varDcl;
                 if (semanticStack.peek() instanceof GlobalBlock)
-                    varDcl = new SimpleVarDcl(name, type.getDescriptor(), false, true, null);
+                    SymbolTableHandler.getInstance().addVariable(name,new GlobalVarDSCP(type,false,false));
                 else
-                    varDcl = new SimpleVarDcl(name, type.getDescriptor(), false, false, null);
-                semanticStack.push(varDcl);
+                    SymbolTableHandler.getInstance().addVariable(name,new LocalVarDSCP(type,false,
+                            SymbolTableHandler.getInstance().getIndex(),false));
+                semanticStack.push(new NOP(name));
                 break;
             }
             case "constTrue": {
@@ -150,7 +152,9 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             }
             case "setValueToVar": {
                 Expression exp = (Expression) semanticStack.pop();
-                SimpleVarDcl varDcl = (SimpleVarDcl) semanticStack.pop();
+                String name = ((NOP) semanticStack.pop()).name;
+                DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(name);
+                SimpleVarDcl varDcl = new SimpleVarDcl(name,dscp.getType(),dscp.isConstant(),dscp instanceof GlobalDSCP);
                 varDcl.setExp(exp);
                 semanticStack.push(varDcl);
                 break;
@@ -180,9 +184,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                     ArrDcl.declare(name, type, new ArrayList<>(), flag, true);
                 else
                     ArrDcl.declare(name, type, new ArrayList<>(), flag, false);
-                NOP nop = new NOP();
-                nop.name = name;
-                semanticStack.push(new NOP());
+                semanticStack.push(new NOP(name));
                 break;
             }
             case "mkArrayVarDCL": {
@@ -422,6 +424,10 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             /* -------------------------- variable ---------------------------- */
             case "pushVar": {
                 String name = (String) lexical.currentToken().getValue();
+                if(SymbolTableHandler.getInstance().getFuncNames().contains(name)){
+                    semanticStack.push(name);
+                    break;
+                }
                 DSCP dscp = SymbolTableHandler.getInstance().getDescriptor(name);
                 if (dscp instanceof GlobalVarDSCP || dscp instanceof LocalVarDSCP)
                     semanticStack.push(new SimpleVar(name, dscp.getType()));
@@ -549,8 +555,8 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             case "funcCall": {
-                SimpleVar funcId = (SimpleVar) semanticStack.pop();
-                semanticStack.push(new FuncCall(funcId.getName(), new ArrayList<>()));
+                String  name = (String) semanticStack.pop();
+                semanticStack.push(new FuncCall(name, new ArrayList<>()));
                 break;
             }
             case "addParam": {
@@ -721,7 +727,12 @@ class NOP implements Operation {
 
     String name;
 
-
+    public NOP(String name) {
+        this.name = name;
+        System.out.println("bjvbds " + name);
+    }
+    public NOP() {
+    }
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {

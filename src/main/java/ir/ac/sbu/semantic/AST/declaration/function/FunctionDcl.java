@@ -2,21 +2,18 @@ package ir.ac.sbu.semantic.AST.declaration.function;
 
 import ir.ac.sbu.semantic.AST.block.Block;
 import ir.ac.sbu.semantic.AST.declaration.Declaration;
-import ir.ac.sbu.semantic.AST.declaration.variable.ArrDcl;
-import ir.ac.sbu.semantic.AST.declaration.variable.SimpleVarDcl;
-import ir.ac.sbu.semantic.AST.declaration.variable.VarDCL;
 import ir.ac.sbu.semantic.AST.statement.FuncReturn;
+import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalArrDSCP;
+import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalDSCP;
+import ir.ac.sbu.semantic.symbolTable.DSCPs.LocalVarDSCP;
 import ir.ac.sbu.semantic.symbolTable.Scope;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import lombok.Data;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
@@ -26,7 +23,7 @@ public class FunctionDcl implements Declaration {
 
     private Type type;
     private String name;
-    private ArrayList<VarDCL> parameters = new ArrayList<>();
+    private List<ParamPair> parameters = new ArrayList<>();
     private List<Type> paramTypes = new ArrayList<>();
     private String signature;
     private Block block;
@@ -38,18 +35,18 @@ public class FunctionDcl implements Declaration {
     }
 
 
-    public void addParameter(VarDCL parameter) {
-        parameters.add(parameter);
-        if (parameter instanceof SimpleVarDcl)
-            paramTypes.add(parameter.getType());
-        else if (parameter instanceof ArrDcl) {
-            paramTypes.add(Type.getType("[" + parameter.getType()));
-            System.out.println("shivaaaaa : " + Type.getType("[" + parameter.getType()));
-        }
+    public void addParameter(String name,LocalDSCP dscp) {
+        System.out.println("added " + name + " param with type " + dscp.getType());
+        ParamPair param = new ParamPair(name,dscp);
+        parameters.add(param);
+        if (dscp instanceof LocalVarDSCP)
+            paramTypes.add(type);
+        else if (dscp instanceof LocalArrDSCP)
+            paramTypes.add(Type.getType("[" + dscp.getType()));
     }
 
 
-    public FunctionDcl(Type type, String name, Block block, ArrayList<VarDCL> parameters) {
+    public FunctionDcl(Type type, String name, Block block, List<ParamPair> parameters) {
         this.type = type;
         this.name = name;
         this.block = block;
@@ -77,16 +74,12 @@ public class FunctionDcl implements Declaration {
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         setSig();
         System.out.println(signature);
-        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC,
+        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC + ACC_STATIC,
                 name, this.signature, null, null);
         //Add current function's symbol table to stackScope
         SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
         SymbolTableHandler.getInstance().setLastFunction(this);
         methodVisitor.visitCode();
-        for (VarDCL varDcl :
-                parameters) {
-            varDcl.codegen(methodVisitor, cw);
-        }
         block.codegen(methodVisitor, cw);
         if (returns.size() == 0)
             throw new RuntimeException("You must use at least one return statement in function!");
@@ -119,17 +112,26 @@ public class FunctionDcl implements Declaration {
         paramTypes = new ArrayList<>();
         // to fill paramTypes and make signature
         StringBuilder signature = new StringBuilder("(");
-        for (VarDCL parameter : parameters) {
-            Type type = parameter.getType();
-            if (parameter instanceof ArrDcl) {
-                type = Type.getType("[" + parameter.getType());
-                System.out.println("shivaaaaa : " + Type.getType("[" + parameter.getType()));
-            }
+        for (ParamPair param:
+             parameters) {
+            Type type = param.dscp.getType();
+            if (param.dscp instanceof LocalArrDSCP)
+                type = Type.getType("[" + param.dscp.getType());
             paramTypes.add(type);
             signature.append(type);
         }
         signature.append(")");
         signature.append(type.toString());
         this.signature = signature.toString();
+    }
+}
+
+class ParamPair{
+    String name;
+    LocalDSCP dscp;
+
+    public ParamPair(String name, LocalDSCP dscp) {
+        this.name = name;
+        this.dscp = dscp;
     }
 }

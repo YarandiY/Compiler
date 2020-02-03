@@ -7,6 +7,7 @@ import org.objectweb.asm.Type;
 public abstract class DSCP {
     protected Type type;
     protected boolean isValid;
+    protected boolean constant;
 
     public DSCP(Type type, boolean isValid) {
         this.type = type;
