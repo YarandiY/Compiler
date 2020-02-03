@@ -1,6 +1,5 @@
 package ir.ac.sbu;
 
-import com.sun.org.apache.bcel.internal.generic.ICONST;
 import ir.ac.sbu.lexical.Scanner;
 import ir.ac.sbu.semantic.AST.Node;
 import ir.ac.sbu.semantic.CodeGenerator;

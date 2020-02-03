@@ -1,6 +1,5 @@
 package ir.ac.sbu.semantic.AST.statement;
 
-import com.sun.org.apache.bcel.internal.generic.ICONST;
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.unary.Cast;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
