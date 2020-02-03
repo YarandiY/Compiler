@@ -6,29 +6,28 @@ return 'k';
 end
 
 int afff = 5;
-int afffdf = afff;
+##int[] afffdf = new int[5];
 
+auto i = 4;
 function void start()
 begin
-int[] t = new int[7];
-int hg = len(t[5]);
-int i = 4;
-int gh = sizeof(int);
-println(gh);
+int[][][] yalda = new int[4][2][2];
+auto test = b(1.1,'f');
+##println(i);
 double j = input(double);
-println(i);
-switch(i) of begin
-case 1:begin
-int jbsd = 2;
-if(jbsd == 2)begin
-jbsd = 7;
-end
-jbsd = 5;
-end
-case 4:begin
-char mn = 's';
-end
-end
+##println(i);
+##switch(i) of begin
+##case 1:begin
+##int jbsd = 2;
+##if(jbsd == 2)begin
+##jbsd = 7;
+##end
+##jbsd = 5;
+##end
+##case 4:begin
+##char mn = 's';
+##end
+##end
 return;
 end
 
