@@ -78,7 +78,7 @@ public class ArrDcl extends VarDCL {
     public void declare() {
         DSCP dscp;
         if (!global)
-            dscp = new LocalArrDSCP(type, true, SymbolTableHandler.getInstance().newIndex(), dimensions, dimNum);
+            dscp = new LocalArrDSCP(type, true, SymbolTableHandler.getInstance().getIndex(), dimensions, dimNum);
         else
             dscp = new GlobalArrDSCP(type, true, dimensions, dimNum);
         SymbolTableHandler.getInstance().addVariable(name, dscp);

@@ -72,6 +72,11 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(flag);
                 break;
             }
+            case "createBlock": {
+                semanticStack.push(new Block(new ArrayList<>()));
+                break;
+            }
+
             /* --------------------- declarations --------------------- */
             case "mkFuncDCL": {
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
@@ -511,6 +516,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 Block block = (Block) semanticStack.pop();
                 FunctionDcl functionDcl = (FunctionDcl) semanticStack.pop();
                 FuncReturn funcReturn = new FuncReturn(null, functionDcl);
+                functionDcl.addReturn(funcReturn);
                 block.addOperation(funcReturn);
                 semanticStack.push(functionDcl);
                 semanticStack.push(block);
@@ -679,8 +685,6 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 throw new RuntimeException("the function is duplicate!!!");
         } else {
             GlobalBlock.getInstance().addDeclaration(function);
-
-
         }
 
     }

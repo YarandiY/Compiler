@@ -67,7 +67,7 @@ public class FunctionDcl implements Declaration {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         setSig();
-        MethodVisitor methodVisitor = cw.visitMethod(ACC_STATIC + ACC_PUBLIC,
+        MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC,
                 name, this.signature,null,null);
         methodVisitor.visitCode();
         //Add current function's symbol table to stackScope

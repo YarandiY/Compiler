@@ -16,7 +16,7 @@ public class SymbolTable extends HashMap<String, DSCP> {
         index += add;
     }
 
-    public int getNewIndex (){
-        return index++;
+    public int getIndex (){
+        return index;
     }
 }

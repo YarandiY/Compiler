@@ -110,10 +110,11 @@ public class SymbolTableHandler {
             case "F":
                 type = Type.FLOAT_TYPE;
                 break;
-//            case "string":
-//            case "String":
-//                type = Type.getType(String.class);
-//                break;
+            case "string":
+            case "String":
+            case "Ljava/lang/String;":
+                type = Type.getType("Ljava/lang/String;");
+                break;
             case "void":
             case "V":
                 type = Type.VOID_TYPE;
@@ -251,8 +252,8 @@ public class SymbolTableHandler {
         }
     }
 
-    public int newIndex() {
-        return getLastScope().getNewIndex();
+    public int getIndex() {
+        return getLastScope().getIndex();
     }
 
 

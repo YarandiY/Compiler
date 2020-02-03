@@ -33,10 +33,14 @@ public class FuncReturn extends Statement {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
+        System.out.println("3");
         FunctionDcl functionDcl = SymbolTableHandler.getInstance().getLastFunction();
-        if(expression == null)
+        if(expression == null) {
             mv.visitInsn(RETURN);
+            System.out.println("4");
+        }
         else {
+            System.out.println("5");
             mv.visitInsn(Cast.getOpcode(expression.getType(),functionDcl.getType()));
             mv.visitInsn(expression.getType().getOpcode(IRETURN));
         }

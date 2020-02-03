@@ -9,7 +9,7 @@ public class StringConst extends ConstantExp {
     private String value;
 
     public StringConst(String value){
-        this.value = value;
+        this.value = value.substring(1,value.length() -1);
         type = Type.getType(String.class);
     }
 
