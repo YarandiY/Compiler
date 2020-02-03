@@ -26,6 +26,7 @@ public class FuncCall extends Expression implements Operation {
         if(parameters == null)
             parameters = new ArrayList<>();
         parameters.add(exp);
+
     }
 
 

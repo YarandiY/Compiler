@@ -36,6 +36,7 @@ public class FunctionDcl implements Declaration {
 
     public void addParameter(VarDCL parameter){
         parameters.add(parameter);
+        paramTypes.add(parameter.getType());
     }
 
 
@@ -54,7 +55,6 @@ public class FunctionDcl implements Declaration {
         signature.append(")");
         signature.append(type.toString());
         this.signature = signature.toString();
-        declare();
     }
 
     public FunctionDcl(String name, String signature, Block block) {
@@ -63,10 +63,10 @@ public class FunctionDcl implements Declaration {
         this.type = Type.getType(signature.substring(signature.indexOf(')') + 1));
         this.name = name;
         this.block = block;
-        declare();
+
     }
 
-    private void declare() {
+    public void declare() {
         SymbolTableHandler.getInstance().addFunction(this);
     }
 

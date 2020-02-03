@@ -164,6 +164,8 @@ public class SymbolTableHandler {
 
     //To declare a function add it to funcDcls
     public void addFunction(FunctionDcl funcDcl) {
+        System.out.println(funcDcl.getName());
+        System.out.println(funcDcl.getParamTypes());
         if (funcDcls.containsKey(funcDcl.getName())) {
             if(funcDcls.get(funcDcl.getName()).contains(funcDcl)){
                 int index = funcDcls.get(funcDcl.getName()).indexOf(funcDcl);
@@ -183,11 +185,11 @@ public class SymbolTableHandler {
     }
 
     public FunctionDcl getFunction(String name, ArrayList<Type> inputs) {
-        System.out.println(name);
-        System.out.println(inputs);
         if (funcDcls.containsKey(name)) {
             ArrayList<FunctionDcl> funcDclMapper = funcDcls.get(name);
             for (FunctionDcl f : funcDclMapper) {
+                System.out.println(f.getName());
+                System.out.println(f.getParamTypes());
                 if (f.checkIfEqual(name, inputs)) {
                     return f;
                 }

@@ -1,11 +1,20 @@
+
+function int b();
+
+function char b(int k)
+begin
+return 'f';
+end
+
+
 function void start()
 begin
 const int a = 2;
-int c = a();
+int c = b();
 return;
 end
 
-function int a()
+function int b()
 begin
-return 4;
+return 3;
 end

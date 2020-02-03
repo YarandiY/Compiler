@@ -93,6 +93,12 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 semanticStack.push(function);
                 break;
             }
+            case "addFuncDCL":{
+                FunctionDcl function = (FunctionDcl) semanticStack.pop();
+                function.declare();
+                semanticStack.push(function);
+                break;
+            }
             case "mkSimpleVarDCL": {
                 String name = (String) lexical.currentToken().getValue();
                 Type type = SymbolTableHandler.getTypeFromName((String) semanticStack.pop());
@@ -645,6 +651,17 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 throw new RuntimeException("the function is duplicate!!!");
         } else {
             GlobalBlock.getInstance().addDeclaration(function);
+
+
+
+
+
+
+
+
+
+
+
         }
 
     }

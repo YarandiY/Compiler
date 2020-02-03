@@ -30,7 +30,6 @@ public class Main {
             // Get Root of AST
             result = codeGenerator.getResult();
         } catch (Exception e) {
-            System.out.println("test");
             System.out.println(e.getMessage());
             return;
         }
