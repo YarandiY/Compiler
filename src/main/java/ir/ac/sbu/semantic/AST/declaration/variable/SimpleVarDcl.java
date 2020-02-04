@@ -57,7 +57,11 @@ public class SimpleVarDcl extends VarDCL {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
-        declare();
+        try{
+            SymbolTableHandler.getInstance().getDescriptor(name);
+        }catch (Exception e){
+            declare();
+        }
         if (global) {
             Expression value = null;
             int access = ACC_STATIC;
@@ -65,7 +69,7 @@ public class SimpleVarDcl extends VarDCL {
             cw.visitField(access, name, type.getDescriptor(),
                     null, value).visitEnd();
             if (exp != null) {
-                executeGlobalExp(cw,mv);
+                executeGlobalExp(cw, mv);
             }
         } else if (exp != null) {
             exp.codegen(mv, cw);
@@ -85,7 +89,7 @@ public class SimpleVarDcl extends VarDCL {
         type = exp.getType();
     }
 
-    private void executeGlobalExp(ClassWriter cw,MethodVisitor mv) {
+    private void executeGlobalExp(ClassWriter cw, MethodVisitor mv) {
         assign(new SimpleVar(name, type), exp, mv, cw);
     }
 

@@ -9,10 +9,7 @@ import ir.ac.sbu.semantic.AST.declaration.function.FunctionDcl;
 import ir.ac.sbu.semantic.AST.declaration.variable.ArrDcl;
 import ir.ac.sbu.semantic.AST.declaration.variable.SimpleVarDcl;
 import ir.ac.sbu.semantic.AST.declaration.variable.VarDCL;
-import ir.ac.sbu.semantic.AST.expression.Expression;
-import ir.ac.sbu.semantic.AST.expression.FuncCall;
-import ir.ac.sbu.semantic.AST.expression.Input;
-import ir.ac.sbu.semantic.AST.expression.Sizeof;
+import ir.ac.sbu.semantic.AST.expression.*;
 import ir.ac.sbu.semantic.AST.expression.binary.arithmetic.*;
 import ir.ac.sbu.semantic.AST.expression.binary.conditional.*;
 import ir.ac.sbu.semantic.AST.expression.constant.*;
@@ -684,6 +681,8 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 break;
             }
             case "len": {
+                Expression expression = (Expression) semanticStack.pop();
+                semanticStack.push(new Len(expression));
                 break;
             }
             case "sizeof": {

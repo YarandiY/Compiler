@@ -1,20 +1,22 @@
-function int b(double[][] kar,int c)
+function char b(double kar,char c)
 begin
-int d = 5;
-int gf = d + 5;
-return c;
+double[][] a = new double[3][4];
+double k = 4.2;
+c = 'h';
+return 'k';
 end
 
-function int b(int a)begin
-return 3;
-end
+
+int[] afff = new int[2];
+auto jhf = 4;
 
 function void start()
 begin
-int a = input(int);
-int kj=4;
-int kjh = b(3);
-println(kjh);
+double k = input(double);
+for(jhf = 0; i<10;i++)
+begin
+k += 4.4;
+end
 return;
 end
 

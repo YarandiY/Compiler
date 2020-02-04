@@ -2,9 +2,6 @@ package ir.ac.sbu.semantic.AST.expression.variable;
 
 import ir.ac.sbu.semantic.AST.expression.Expression;
 import ir.ac.sbu.semantic.AST.expression.binary.conditional.BiggerEqual;
-import ir.ac.sbu.semantic.AST.expression.binary.conditional.BiggerThan;
-import ir.ac.sbu.semantic.AST.expression.binary.conditional.NotEqual;
-import ir.ac.sbu.semantic.AST.expression.constant.IntegerConst;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.DSCP;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.GlobalArrDSCP;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
