@@ -34,6 +34,7 @@ import ir.ac.sbu.semantic.AST.statement.loop.InitExp;
 import ir.ac.sbu.semantic.AST.statement.loop.Repeat;
 import ir.ac.sbu.semantic.AST.statement.loop.StepExp;
 import ir.ac.sbu.semantic.symbolTable.DSCPs.*;
+import ir.ac.sbu.semantic.symbolTable.Scope;
 import ir.ac.sbu.semantic.symbolTable.SymbolTable;
 import ir.ac.sbu.semantic.symbolTable.SymbolTableHandler;
 import ir.ac.sbu.syntax.Lexical;
@@ -88,11 +89,13 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                         (String) lexical.currentToken().getValue(), null, new ArrayList<>());
                 semanticStack.push(functionDcl);
                 SymbolTableHandler.getInstance().setLastFunction(functionDcl);
+                SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
                 break;
             }
             case "addParameter": {
                 String name = ((NOP) semanticStack.pop()).name;
                 LocalDSCP dscp = (LocalDSCP) SymbolTableHandler.getInstance().getDescriptor(name);
+                dscp.setValid(true);
                 FunctionDcl function = (FunctionDcl) semanticStack.pop();
                 function.addParameter(name,dscp);
                 semanticStack.push(function);
@@ -104,6 +107,7 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
                 function.setBlock(block);
                 semanticStack.push(function);
                 SymbolTableHandler.getInstance().setLastFunction(null);
+                SymbolTableHandler.getInstance().popScope();
                 break;
             }
             case "addFuncDCL": {
@@ -718,12 +722,10 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             if (dscp instanceof GlobalArrDSCP) {
                 if (((GlobalArrDSCP) dscp).getDimNum() != numberOfExp)
                     throw new RuntimeException("you can't assign an expression to array");
-                System.out.println(((GlobalArrDSCP) dscp).getDimNum());
             }
             if (dscp instanceof LocalArrDSCP) {
                 if (((LocalArrDSCP) dscp).getDimNum() != numberOfExp)
                     throw new RuntimeException("you can't assign an expression to array");
-                System.out.println(((LocalArrDSCP) dscp).getDimNum());
             }
         }
     }
@@ -735,7 +737,6 @@ class NOP implements Operation {
 
     public NOP(String name) {
         this.name = name;
-        System.out.println("bjvbds " + name);
     }
     public NOP() {
     }

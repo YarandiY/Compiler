@@ -24,6 +24,7 @@ public class SymbolTableHandler {
     private SymbolTableHandler() {
         SymbolTable globalSymTbl = new SymbolTable();
         globalSymTbl.setIndex(1);
+        globalSymTbl.setTypeOfScope(Scope.GLOBAL);
         stackScopes.add(globalSymTbl);
     }
     public static SymbolTableHandler getInstance() {
@@ -217,12 +218,11 @@ public class SymbolTableHandler {
     public DSCP getDescriptor(String name) {
         int symbolTbl = stackScopes.size() - 1;
         while (symbolTbl >= 0) {
-
             if (stackScopes.get(symbolTbl).containsKey(name))
                 return stackScopes.get(symbolTbl).get(name);
             symbolTbl--;
         }
-        throw new RuntimeException("the name " + name +" doesn't exist");
+        throw new RuntimeException("the name " + name +" didn't initial");
     }
 
     public boolean canHaveBreak() {

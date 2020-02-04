@@ -57,6 +57,7 @@ public class SimpleVarDcl extends VarDCL {
 
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
+        declare();
         if (global) {
             Expression value = null;
             int access = ACC_STATIC;

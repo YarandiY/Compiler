@@ -4,5 +4,6 @@ public enum Scope {
     FUNCTION,
     LOOP,
     SWITCH,
-    IF
+    IF,
+    GLOBAL
 }

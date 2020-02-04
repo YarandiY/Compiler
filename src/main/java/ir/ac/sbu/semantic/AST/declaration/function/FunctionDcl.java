@@ -36,7 +36,6 @@ public class FunctionDcl implements Declaration {
 
 
     public void addParameter(String name,LocalDSCP dscp) {
-        System.out.println("added " + name + " param with type " + dscp.getType());
         ParamPair param = new ParamPair(name,dscp);
         parameters.add(param);
         if (dscp instanceof LocalVarDSCP)
@@ -73,11 +72,13 @@ public class FunctionDcl implements Declaration {
     @Override
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         setSig();
-        System.out.println(signature);
         MethodVisitor methodVisitor = cw.visitMethod(ACC_PUBLIC + ACC_STATIC,
                 name, this.signature, null, null);
         //Add current function's symbol table to stackScope
         SymbolTableHandler.getInstance().addScope(Scope.FUNCTION);
+        parameters.forEach((paramPair) -> {
+            SymbolTableHandler.getInstance().addVariable(paramPair.name,paramPair.dscp);
+        });
         SymbolTableHandler.getInstance().setLastFunction(this);
         methodVisitor.visitCode();
         block.codegen(methodVisitor, cw);

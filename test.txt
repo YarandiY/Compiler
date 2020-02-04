@@ -1,33 +1,20 @@
-function char b(double kar,char c)
+function int b(double[][] kar,int c)
 begin
-double a = 5.6;
-c = 'h';
-return 'k';
+int d = 5;
+int gf = d + 5;
+return c;
 end
 
-int afff = 5;
-##int[] afffdf = new int[5];
+function int b(int a)begin
+return 3;
+end
 
-auto i = 4;
 function void start()
 begin
-int[][][] yalda = new int[4][2][2];
-auto test = b(1.1,'f');
-##println(i);
-double j = input(double);
-##println(i);
-##switch(i) of begin
-##case 1:begin
-##int jbsd = 2;
-##if(jbsd == 2)begin
-##jbsd = 7;
-##end
-##jbsd = 5;
-##end
-##case 4:begin
-##char mn = 's';
-##end
-##end
+int a = input(int);
+int kj=4;
+int kjh = b(3);
+println(kjh);
 return;
 end
 
