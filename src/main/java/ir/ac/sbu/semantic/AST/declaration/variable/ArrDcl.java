@@ -49,7 +49,6 @@ public class ArrDcl extends VarDCL {
     public void codegen(MethodVisitor mv, ClassWriter cw) {
         if (global){
             executeGlobalExp(cw, mv);
-            //TODO what is it?
             String repeatedArray = new String(new char[dimensions.size()]).replace("\0", "[");
             Type arrayType = Type.getType(repeatedArray + type.getDescriptor());
             cw.visitField(ACC_STATIC, name, arrayType.getDescriptor(), null, null).visitEnd();
