@@ -11,8 +11,9 @@ int afff = 5;
 auto i = 4;
 function void start()
 begin
-int[][][] yalda = new int[4][2][2];
-auto test = b(1.1,'f');
+##int[][][] yalda = new int[4][2][2];
+##int shiva = len(yalda[2]);
+##auto test = b(1.1,'f');
 ##println(i);
 double j = input(double);
 ##println(i);

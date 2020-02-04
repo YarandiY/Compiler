@@ -717,12 +717,10 @@ public class CodeGenerator implements ir.ac.sbu.syntax.CodeGenerator {
             if (dscp instanceof GlobalArrDSCP) {
                 if (((GlobalArrDSCP) dscp).getDimNum() != numberOfExp)
                     throw new RuntimeException("you can't assign an expression to array");
-                System.out.println(((GlobalArrDSCP) dscp).getDimNum());
             }
             if (dscp instanceof LocalArrDSCP) {
                 if (((LocalArrDSCP) dscp).getDimNum() != numberOfExp)
                     throw new RuntimeException("you can't assign an expression to array");
-                System.out.println(((LocalArrDSCP) dscp).getDimNum());
             }
         }
     }
@@ -734,7 +732,6 @@ class NOP implements Operation {
 
     public NOP(String name) {
         this.name = name;
-        System.out.println("bjvbds " + name);
     }
     public NOP() {
     }
